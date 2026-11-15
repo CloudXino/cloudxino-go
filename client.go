@@ -30,7 +30,7 @@ import (
 const Version = "0.1.0"
 
 // DefaultBaseURL is the public API.
-const DefaultBaseURL = "https://console.cloudxino.com/api"
+const DefaultBaseURL = "https://cloudxino.com/api"
 
 // Client talks to the CloudXino API with one API key (a team's key, Account → API keys).
 type Client struct {

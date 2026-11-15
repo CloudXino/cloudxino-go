@@ -83,7 +83,7 @@ The models in `types.gen.go` are generated from `openapi/cloudxino.json`, a subs
 OpenAPI document:
 
 ```sh
-curl -s https://console.cloudxino.com/api/openapi.json > /tmp/full.json
+curl -s https://cloudxino.com/api/openapi.json > /tmp/full.json
 python3 scripts/filter_openapi.py /tmp/full.json > openapi/cloudxino.json
 go generate ./...
 go test ./...
