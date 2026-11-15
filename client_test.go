@@ -291,3 +291,15 @@ func TestRetryAfterDate(t *testing.T) {
 		t.Fatalf("got %s", d)
 	}
 }
+
+func TestImagesSendsRegionID(t *testing.T) {
+	c, f := newFake(t, func(w http.ResponseWriter, r *http.Request, n int) {
+		writeJSON(w, 200, []any{})
+	})
+	if _, err := c.Servers.Images(context.Background(), "dhaka-1"); err != nil {
+		t.Fatal(err)
+	}
+	if got := f.calls[0]; got.Path != "/api/v1/mc2/options/images" || got.Query != "region_id=dhaka-1" {
+		t.Errorf("sent %s?%s", got.Path, got.Query)
+	}
+}

@@ -189,7 +189,7 @@ func (s *ServersService) Sizes(ctx context.Context) (json.RawMessage, error) {
 func (s *ServersService) Images(ctx context.Context, region string) (json.RawMessage, error) {
 	q := url.Values{}
 	if region != "" {
-		q.Set("region", region)
+		q.Set("region_id", region) // the API's parameter name
 	}
 	return s.options(ctx, "images", q)
 }
