@@ -7,8 +7,9 @@ import (
 )
 
 // ReservedIPsService manages reserved IPs (/v1/reserved-ips): public IPv4 addresses the team
-// keeps until it deletes them, and points at a CC2 server in the same region. Moving one to
-// another server keeps the address; nothing changes inside either server.
+// keeps until it deletes them, and points at a CC2 server, a CC2 load balancer or a CKS
+// LoadBalancer Service in the same region. Moving one keeps the address; nothing changes inside
+// the server or load balancer.
 //
 // When no address is free, or reserved IPs are turned off, Create and Assign answer 503 with
 // code "unavailable" (IsUnavailable); that error is not retried.
@@ -22,8 +23,15 @@ type ListReservedIPsOptions struct {
 // Reserved IP status values.
 const (
 	ReservedIPStatusAvailable = "available" // reserved, not pointing anywhere
-	ReservedIPStatusAssigned  = "assigned"  // pointing at a server
+	ReservedIPStatusAssigned  = "assigned"  // pointing at a target
 	ReservedIPStatusDeleting  = "deleting"
+)
+
+// Reserved IP target types (ReservedIP.TargetType).
+const (
+	ReservedIPTargetServer          = "mc2"           // CC2 server
+	ReservedIPTargetLoadBalancer    = "load_balancer" // CC2 load balancer
+	ReservedIPTargetCKSLoadBalancer = "cks_lb"        // CKS LoadBalancer Service
 )
 
 func (s *ReservedIPsService) List(ctx context.Context, opts *ListReservedIPsOptions) ([]ReservedIP, error) {
@@ -48,7 +56,24 @@ func (s *ReservedIPsService) Create(ctx context.Context, req CreateReservedIPReq
 // Assign points the address at a CC2 server in its region, moving it when it points elsewhere.
 // The change is done when it answers.
 func (s *ReservedIPsService) Assign(ctx context.Context, id, serverID string) (*ReservedIP, error) {
-	return send[ReservedIP](ctx, s.c, http.MethodPost, "/v1/reserved-ips"+p(id)+"/assign", AssignReservedIPRequest{ServerId: serverID}, nil)
+	return s.assign(ctx, id, AssignReservedIPRequest{ServerId: &serverID})
+}
+
+// AssignLoadBalancer points the address at a CC2 load balancer in its region (its forwarding
+// rules answer on the reserved IP too), moving it when it points elsewhere. Done when it answers.
+func (s *ReservedIPsService) AssignLoadBalancer(ctx context.Context, id, loadBalancerID string) (*ReservedIP, error) {
+	return s.assign(ctx, id, AssignReservedIPRequest{LoadBalancerId: &loadBalancerID})
+}
+
+// AssignCKSLoadBalancer points the address at a CKS LoadBalancer Service (an id from
+// GET /v1/clusters/{id}/load-balancers). It answers "assigned" at once; the cluster switches the
+// Service to the address within a minute and gives its own IP back.
+func (s *ReservedIPsService) AssignCKSLoadBalancer(ctx context.Context, id, cksLoadBalancerID string) (*ReservedIP, error) {
+	return s.assign(ctx, id, AssignReservedIPRequest{CksLoadBalancerId: &cksLoadBalancerID})
+}
+
+func (s *ReservedIPsService) assign(ctx context.Context, id string, req AssignReservedIPRequest) (*ReservedIP, error) {
+	return send[ReservedIP](ctx, s.c, http.MethodPost, "/v1/reserved-ips"+p(id)+"/assign", req, nil)
 }
 
 // Unassign stops sending the address anywhere. The team keeps it (and is billed for it).

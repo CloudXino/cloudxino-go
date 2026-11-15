@@ -37,7 +37,9 @@ type AssignRequest struct {
 
 // AssignReservedIPRequest defines model for AssignReservedIPRequest.
 type AssignReservedIPRequest struct {
-	ServerId string `json:"server_id"`
+	CksLoadBalancerId *string `json:"cks_load_balancer_id,omitempty"`
+	LoadBalancerId    *string `json:"load_balancer_id,omitempty"`
+	ServerId          *string `json:"server_id,omitempty"`
 }
 
 // AttachVolumeRequest defines model for AttachVolumeRequest.
@@ -238,17 +240,19 @@ type RecordIn struct {
 
 // ReservedIP defines model for ReservedIP.
 type ReservedIP struct {
-	AssignedTo *string `json:"assigned_to,omitempty"`
-	CreatedAt  *string `json:"created_at,omitempty"`
-	Error      *string `json:"error,omitempty"`
-	Id         string  `json:"id"`
-	IpAddress  *string `json:"ip_address,omitempty"`
-	ProjectId  *string `json:"project_id,omitempty"`
-	Region     *string `json:"region,omitempty"`
-	ServerId   *string `json:"server_id,omitempty"`
-	Status     *string `json:"status,omitempty"`
-	TargetId   *string `json:"target_id,omitempty"`
-	TargetType *string `json:"target_type,omitempty"`
+	AssignedTo        *string `json:"assigned_to,omitempty"`
+	CksLoadBalancerId *string `json:"cks_load_balancer_id,omitempty"`
+	CreatedAt         *string `json:"created_at,omitempty"`
+	Error             *string `json:"error,omitempty"`
+	Id                string  `json:"id"`
+	IpAddress         *string `json:"ip_address,omitempty"`
+	LoadBalancerId    *string `json:"load_balancer_id,omitempty"`
+	ProjectId         *string `json:"project_id,omitempty"`
+	Region            *string `json:"region,omitempty"`
+	ServerId          *string `json:"server_id,omitempty"`
+	Status            *string `json:"status,omitempty"`
+	TargetId          *string `json:"target_id,omitempty"`
+	TargetType        *string `json:"target_type,omitempty"`
 }
 
 // ResizeMC2Request defines model for ResizeMC2Request.
