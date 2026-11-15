@@ -123,3 +123,21 @@ func TestMaintenance503StillRetried(t *testing.T) {
 		t.Fatalf("calls=%d err=%v", len(f.calls), err)
 	}
 }
+
+func TestReservedIPsAssignLoadBalancers(t *testing.T) {
+	c, f := newFake(t, func(w http.ResponseWriter, r *http.Request, n int) {
+		writeJSON(w, 200, rip("assigned", nil))
+	})
+	ctx := context.Background()
+	if _, err := c.ReservedIPs.AssignLoadBalancer(ctx, "r1", "lb1"); err != nil {
+		t.Fatal(err)
+	}
+	if _, err := c.ReservedIPs.AssignCKSLoadBalancer(ctx, "r1", "cks1"); err != nil {
+		t.Fatal(err)
+	}
+	for i, want := range []string{`{"load_balancer_id":"lb1"}`, `{"cks_load_balancer_id":"cks1"}`} {
+		if got := f.calls[i]; got.Path != "/api/v1/reserved-ips/r1/assign" || got.Body != want {
+			t.Fatalf("call %d sent %s %s", i, got.Path, got.Body)
+		}
+	}
+}

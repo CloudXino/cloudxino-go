@@ -59,12 +59,14 @@ Services: `Servers` (CC2), `Firewalls`, `LoadBalancers`, `DNS` (zones and record
 
 ### Reserved IPs
 
-A reserved IP is a public IPv4 address the team keeps until it deletes it, pointed at a CC2 server
-in the same region. Moving it to another server keeps the address.
+A reserved IP is a public IPv4 address the team keeps until it deletes it, pointed at a CC2 server,
+a CC2 load balancer or a CKS LoadBalancer Service in the same region. Moving it keeps the address.
 
 ```go
 ip, err := client.ReservedIPs.Create(ctx, cloudxino.CreateReservedIPRequest{Region: &region})
 ip, err = client.ReservedIPs.Assign(ctx, ip.Id, server.Id) // or move it
+ip, err = client.ReservedIPs.AssignLoadBalancer(ctx, ip.Id, lb.Id)
+ip, err = client.ReservedIPs.AssignCKSLoadBalancer(ctx, ip.Id, svcLB.Id) // the cluster switches within a minute
 ip, err = client.ReservedIPs.Unassign(ctx, ip.Id)
 err = client.ReservedIPs.Delete(ctx, ip.Id)                 // unassigns first
 ```

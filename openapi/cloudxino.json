@@ -22,14 +22,25 @@
       },
       "AssignReservedIPRequest": {
         "properties": {
+          "cks_load_balancer_id": {
+            "nullable": true,
+            "title": "Cks Load Balancer Id",
+            "type": "string",
+            "x-omitempty": true
+          },
+          "load_balancer_id": {
+            "nullable": true,
+            "title": "Load Balancer Id",
+            "type": "string",
+            "x-omitempty": true
+          },
           "server_id": {
+            "nullable": true,
             "title": "Server Id",
-            "type": "string"
+            "type": "string",
+            "x-omitempty": true
           }
         },
-        "required": [
-          "server_id"
-        ],
         "title": "AssignReservedIPRequest",
         "type": "object"
       },
@@ -936,6 +947,12 @@
             "type": "string",
             "x-omitempty": true
           },
+          "cks_load_balancer_id": {
+            "nullable": true,
+            "title": "Cks Load Balancer Id",
+            "type": "string",
+            "x-omitempty": true
+          },
           "created_at": {
             "nullable": true,
             "title": "Created At",
@@ -955,6 +972,12 @@
           "ip_address": {
             "nullable": true,
             "title": "Ip Address",
+            "type": "string",
+            "x-omitempty": true
+          },
+          "load_balancer_id": {
+            "nullable": true,
+            "title": "Load Balancer Id",
             "type": "string",
             "x-omitempty": true
           },
