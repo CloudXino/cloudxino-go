@@ -20,12 +20,14 @@ PREFIXES = (
     "/v1/dns/zones",
     "/v1/projects",
     "/v1/ssh-keys",
+    "/v1/reserved-ips",
     "/v1/users/me",
 )
 # action and console-only routes the SDK does not cover
 SKIP = (
     "/terminal", "/cxpanel", "/fix-ssh-key", "/insights", "/alert-policies", "/health/", "/default/get",
     "/accelerator", "/domains", "/options/custom", "/set-default", "/firewalls/options", "/email-records", "/delegate",
+    "/reserved-ips/options",
 )
 
 

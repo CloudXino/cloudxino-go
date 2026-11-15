@@ -35,6 +35,11 @@ type AssignRequest struct {
 	ResourceType *string `json:"resource_type,omitempty"`
 }
 
+// AssignReservedIPRequest defines model for AssignReservedIPRequest.
+type AssignReservedIPRequest struct {
+	ServerId string `json:"server_id"`
+}
+
 // AttachVolumeRequest defines model for AttachVolumeRequest.
 type AttachVolumeRequest struct {
 	Name     *string `json:"name,omitempty"`
@@ -98,6 +103,13 @@ type CreateProjectRequest struct {
 	Description *string `json:"description,omitempty"`
 	Name        string  `json:"name"`
 	Slug        *string `json:"slug,omitempty"`
+}
+
+// CreateReservedIPRequest defines model for CreateReservedIPRequest.
+type CreateReservedIPRequest struct {
+	ProjectId *string `json:"project_id,omitempty"`
+	Region    *string `json:"region,omitempty"`
+	ServerId  *string `json:"server_id,omitempty"`
 }
 
 // DnsRecord defines model for DnsRecord.
@@ -224,6 +236,21 @@ type RecordIn struct {
 	Type     string  `json:"type"`
 }
 
+// ReservedIP defines model for ReservedIP.
+type ReservedIP struct {
+	AssignedTo *string `json:"assigned_to,omitempty"`
+	CreatedAt  *string `json:"created_at,omitempty"`
+	Error      *string `json:"error,omitempty"`
+	Id         string  `json:"id"`
+	IpAddress  *string `json:"ip_address,omitempty"`
+	ProjectId  *string `json:"project_id,omitempty"`
+	Region     *string `json:"region,omitempty"`
+	ServerId   *string `json:"server_id,omitempty"`
+	Status     *string `json:"status,omitempty"`
+	TargetId   *string `json:"target_id,omitempty"`
+	TargetType *string `json:"target_type,omitempty"`
+}
+
 // ResizeMC2Request defines model for ResizeMC2Request.
 type ResizeMC2Request struct {
 	Size string `json:"size"`
@@ -347,6 +374,11 @@ type GetAvailableImagesV1Mc2OptionsImagesGetParams struct {
 	RegionId *string `form:"region_id,omitempty" json:"region_id,omitempty"`
 }
 
+// ListReservedIpsV1ReservedIpsGetParams defines parameters for ListReservedIpsV1ReservedIpsGet.
+type ListReservedIpsV1ReservedIpsGetParams struct {
+	IpAddress *string `form:"ip_address,omitempty" json:"ip_address,omitempty"`
+}
+
 // ListSshKeysV1SshKeysGetParams defines parameters for ListSshKeysV1SshKeysGet.
 type ListSshKeysV1SshKeysGetParams struct {
 	Name        *string `form:"name,omitempty" json:"name,omitempty"`
@@ -412,6 +444,12 @@ type CreateProjectV1ProjectsPostJSONRequestBody = CreateProjectRequest
 
 // UpdateProjectV1ProjectsProjectIdPatchJSONRequestBody defines body for UpdateProjectV1ProjectsProjectIdPatch for application/json ContentType.
 type UpdateProjectV1ProjectsProjectIdPatchJSONRequestBody = UpdateProjectRequest
+
+// CreateReservedIpV1ReservedIpsPostJSONRequestBody defines body for CreateReservedIpV1ReservedIpsPost for application/json ContentType.
+type CreateReservedIpV1ReservedIpsPostJSONRequestBody = CreateReservedIPRequest
+
+// AssignReservedIpV1ReservedIpsIpIdAssignPostJSONRequestBody defines body for AssignReservedIpV1ReservedIpsIpIdAssignPost for application/json ContentType.
+type AssignReservedIpV1ReservedIpsIpIdAssignPostJSONRequestBody = AssignReservedIPRequest
 
 // CreateSshKeyV1SshKeysPostJSONRequestBody defines body for CreateSshKeyV1SshKeysPost for application/json ContentType.
 type CreateSshKeyV1SshKeysPostJSONRequestBody = SSHKeyCreate
