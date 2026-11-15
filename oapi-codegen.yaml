@@ -1,0 +1,9 @@
+package: cloudxino
+generate:
+  models: true
+output: types.gen.go
+output-options:
+  skip-prune: false
+  nullable-type: false
+compatibility:
+  always-prefix-enum-values: true
