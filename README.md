@@ -55,11 +55,26 @@ func main() {
 ```
 
 Services: `Servers` (CC2), `Firewalls`, `LoadBalancers`, `DNS` (zones and records), `Projects`,
-`SSHKeys` and `Account` (who the key acts for).
+`SSHKeys`, `ReservedIPs` and `Account` (who the key acts for).
+
+### Reserved IPs
+
+A reserved IP is a public IPv4 address the team keeps until it deletes it, pointed at a CC2 server
+in the same region. Moving it to another server keeps the address.
+
+```go
+ip, err := client.ReservedIPs.Create(ctx, cloudxino.CreateReservedIPRequest{Region: &region})
+ip, err = client.ReservedIPs.Assign(ctx, ip.Id, server.Id) // or move it
+ip, err = client.ReservedIPs.Unassign(ctx, ip.Id)
+err = client.ReservedIPs.Delete(ctx, ip.Id)                 // unassigns first
+```
+
+When no address is free (or reserved IPs are off for the API), `Create` and `Assign` return a 503
+with code `unavailable`; check it with `cloudxino.IsUnavailable(err)`. It is not retried.
 
 ### Retries and idempotency
 
-- Requests are retried on `429`, maintenance (`503`) and gateway errors, waiting as long as the API's
+- Requests are retried on `429`, maintenance (`503`, but not `503 unavailable`) and gateway errors, waiting as long as the API's
   `Retry-After` says, otherwise with exponential backoff (`WithRetries` to tune it).
 - Every `POST` carries an `Idempotency-Key`, and retries reuse it, so a retried create never makes a
   second server or charges twice. Pass your own key (the last argument of `Create`) to stay safe
@@ -69,7 +84,7 @@ Services: `Servers` (CC2), `Firewalls`, `LoadBalancers`, `DNS` (zones and record
 
 Errors from the API are `*cloudxino.APIError` with a stable `Code` (`not_found`,
 `insufficient_balance`, `rate_limited`, `validation_error`, ...). Use `cloudxino.IsNotFound(err)`,
-`cloudxino.IsConflict(err)` or `cloudxino.ErrorCode(err)` to branch on them.
+`cloudxino.IsConflict(err)`, `cloudxino.IsUnavailable(err)` or `cloudxino.ErrorCode(err)` to branch on them.
 
 ### Waiting
 

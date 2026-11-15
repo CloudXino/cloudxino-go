@@ -20,6 +20,19 @@
         "title": "AssignRequest",
         "type": "object"
       },
+      "AssignReservedIPRequest": {
+        "properties": {
+          "server_id": {
+            "title": "Server Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "server_id"
+        ],
+        "title": "AssignReservedIPRequest",
+        "type": "object"
+      },
       "AttachVolumeRequest": {
         "properties": {
           "name": {
@@ -334,6 +347,30 @@
           "name"
         ],
         "title": "CreateProjectRequest",
+        "type": "object"
+      },
+      "CreateReservedIPRequest": {
+        "properties": {
+          "project_id": {
+            "nullable": true,
+            "title": "Project Id",
+            "type": "string",
+            "x-omitempty": true
+          },
+          "region": {
+            "nullable": true,
+            "title": "Region",
+            "type": "string",
+            "x-omitempty": true
+          },
+          "server_id": {
+            "nullable": true,
+            "title": "Server Id",
+            "type": "string",
+            "x-omitempty": true
+          }
+        },
+        "title": "CreateReservedIPRequest",
         "type": "object"
       },
       "DnsRecord": {
@@ -889,6 +926,79 @@
           "content"
         ],
         "title": "RecordIn",
+        "type": "object"
+      },
+      "ReservedIP": {
+        "properties": {
+          "assigned_to": {
+            "nullable": true,
+            "title": "Assigned To",
+            "type": "string",
+            "x-omitempty": true
+          },
+          "created_at": {
+            "nullable": true,
+            "title": "Created At",
+            "type": "string",
+            "x-omitempty": true
+          },
+          "error": {
+            "nullable": true,
+            "title": "Error",
+            "type": "string",
+            "x-omitempty": true
+          },
+          "id": {
+            "title": "Id",
+            "type": "string"
+          },
+          "ip_address": {
+            "nullable": true,
+            "title": "Ip Address",
+            "type": "string",
+            "x-omitempty": true
+          },
+          "project_id": {
+            "nullable": true,
+            "title": "Project Id",
+            "type": "string",
+            "x-omitempty": true
+          },
+          "region": {
+            "nullable": true,
+            "title": "Region",
+            "type": "string",
+            "x-omitempty": true
+          },
+          "server_id": {
+            "nullable": true,
+            "title": "Server Id",
+            "type": "string",
+            "x-omitempty": true
+          },
+          "status": {
+            "nullable": true,
+            "title": "Status",
+            "type": "string",
+            "x-omitempty": true
+          },
+          "target_id": {
+            "nullable": true,
+            "title": "Target Id",
+            "type": "string",
+            "x-omitempty": true
+          },
+          "target_type": {
+            "nullable": true,
+            "title": "Target Type",
+            "type": "string",
+            "x-omitempty": true
+          }
+        },
+        "required": [
+          "id"
+        ],
+        "title": "ReservedIP",
         "type": "object"
       },
       "ResizeMC2Request": {
@@ -3230,6 +3340,224 @@
         "summary": "Update Project",
         "tags": [
           "projects"
+        ]
+      }
+    },
+    "/v1/reserved-ips": {
+      "get": {
+        "operationId": "list_reserved_ips_v1_reserved_ips_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "ip_address",
+            "required": false,
+            "schema": {
+              "nullable": true,
+              "title": "Ip Address",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/ReservedIP"
+                  },
+                  "title": "Response List Reserved Ips V1 Reserved Ips Get",
+                  "type": "array"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "List Reserved Ips",
+        "tags": [
+          "networking"
+        ]
+      },
+      "post": {
+        "operationId": "create_reserved_ip_v1_reserved_ips_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateReservedIPRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReservedIP"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Create Reserved Ip",
+        "tags": [
+          "networking"
+        ]
+      }
+    },
+    "/v1/reserved-ips/{ip_id}": {
+      "delete": {
+        "operationId": "delete_reserved_ip_v1_reserved_ips__ip_id__delete",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "ip_id",
+            "required": true,
+            "schema": {
+              "title": "Ip Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {}
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Delete Reserved Ip",
+        "tags": [
+          "networking"
+        ]
+      },
+      "get": {
+        "operationId": "get_reserved_ip_v1_reserved_ips__ip_id__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "ip_id",
+            "required": true,
+            "schema": {
+              "title": "Ip Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReservedIP"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Get Reserved Ip",
+        "tags": [
+          "networking"
+        ]
+      }
+    },
+    "/v1/reserved-ips/{ip_id}/assign": {
+      "post": {
+        "operationId": "assign_reserved_ip_v1_reserved_ips__ip_id__assign_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "ip_id",
+            "required": true,
+            "schema": {
+              "title": "Ip Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AssignReservedIPRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReservedIP"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Assign Reserved Ip",
+        "tags": [
+          "networking"
+        ]
+      }
+    },
+    "/v1/reserved-ips/{ip_id}/unassign": {
+      "post": {
+        "operationId": "unassign_reserved_ip_v1_reserved_ips__ip_id__unassign_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "ip_id",
+            "required": true,
+            "schema": {
+              "title": "Ip Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReservedIP"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Unassign Reserved Ip",
+        "tags": [
+          "networking"
         ]
       }
     },

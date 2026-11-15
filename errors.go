@@ -22,6 +22,7 @@ const (
 	CodeQuotaExceeded         = "quota_exceeded"
 	CodeRateLimited           = "rate_limited"
 	CodeMaintenance           = "maintenance"
+	CodeUnavailable           = "unavailable" // 503: the feature has nothing to give right now (e.g. no free reserved IP)
 	CodeIdempotencyInProgress = "idempotency_in_progress"
 	CodeIdempotencyKeyReused  = "idempotency_key_reused"
 	CodeInternal              = "internal_error"
@@ -50,6 +51,8 @@ func (e *APIError) Retryable() bool {
 	switch e.Code {
 	case CodeRateLimited, CodeMaintenance, CodeIdempotencyInProgress:
 		return true
+	case CodeUnavailable: // a 503 that a retry will not fix soon
+		return false
 	}
 	switch e.StatusCode {
 	case http.StatusTooManyRequests, http.StatusBadGateway, http.StatusServiceUnavailable, http.StatusGatewayTimeout:
@@ -63,6 +66,10 @@ func IsNotFound(err error) bool { return hasStatus(err, http.StatusNotFound) }
 
 // IsConflict reports whether err is a 409 from the API (e.g. an action the resource's state does not allow yet).
 func IsConflict(err error) bool { return hasStatus(err, http.StatusConflict) }
+
+// IsUnavailable reports whether err is the API's 503 "unavailable" answer: the feature cannot give
+// what was asked right now (no free reserved IP, or reserved IPs are turned off).
+func IsUnavailable(err error) bool { return ErrorCode(err) == CodeUnavailable }
 
 // ErrorCode returns the API error code of err, or "" when err is not an *APIError.
 func ErrorCode(err error) string {
