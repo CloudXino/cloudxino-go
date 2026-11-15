@@ -1,0 +1,3460 @@
+{
+  "components": {
+    "schemas": {
+      "AssignRequest": {
+        "properties": {
+          "resource_id": {
+            "title": "Resource Id",
+            "type": "string"
+          },
+          "resource_type": {
+            "default": "cc2",
+            "title": "Resource Type",
+            "type": "string",
+            "x-omitempty": true
+          }
+        },
+        "required": [
+          "resource_id"
+        ],
+        "title": "AssignRequest",
+        "type": "object"
+      },
+      "AttachVolumeRequest": {
+        "properties": {
+          "name": {
+            "maxLength": 63,
+            "minLength": 1,
+            "nullable": true,
+            "title": "Name",
+            "type": "string",
+            "x-omitempty": true
+          },
+          "size_gb": {
+            "maximum": 2000.0,
+            "minimum": 1.0,
+            "nullable": true,
+            "title": "Size Gb",
+            "type": "integer",
+            "x-omitempty": true
+          },
+          "volume_id": {
+            "nullable": true,
+            "title": "Volume Id",
+            "type": "string",
+            "x-omitempty": true
+          }
+        },
+        "title": "AttachVolumeRequest",
+        "type": "object"
+      },
+      "BackupPolicyRequest": {
+        "properties": {
+          "daily": {
+            "title": "Daily",
+            "type": "boolean"
+          },
+          "keep_days": {
+            "default": 7,
+            "minimum": 1.0,
+            "title": "Keep Days",
+            "type": "integer",
+            "x-omitempty": true
+          }
+        },
+        "required": [
+          "daily"
+        ],
+        "title": "BackupPolicyRequest",
+        "type": "object"
+      },
+      "CreateFirewallRequest": {
+        "properties": {
+          "inbound_rules": {
+            "default": [],
+            "items": {
+              "$ref": "#/components/schemas/RuleIn"
+            },
+            "title": "Inbound Rules",
+            "type": "array",
+            "x-omitempty": true
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "outbound_rules": {
+            "items": {
+              "$ref": "#/components/schemas/RuleIn"
+            },
+            "nullable": true,
+            "title": "Outbound Rules",
+            "type": "array",
+            "x-omitempty": true
+          },
+          "server_ids": {
+            "default": [],
+            "items": {
+              "type": "string"
+            },
+            "title": "Server Ids",
+            "type": "array",
+            "x-omitempty": true
+          },
+          "tags": {
+            "default": [],
+            "items": {
+              "type": "string"
+            },
+            "title": "Tags",
+            "type": "array",
+            "x-omitempty": true
+          }
+        },
+        "required": [
+          "name"
+        ],
+        "title": "CreateFirewallRequest",
+        "type": "object"
+      },
+      "CreateLoadBalancerRequest": {
+        "properties": {
+          "algorithm": {
+            "default": "round_robin",
+            "title": "Algorithm",
+            "type": "string",
+            "x-omitempty": true
+          },
+          "forwarding_rules": {
+            "items": {
+              "$ref": "#/components/schemas/ForwardingRule"
+            },
+            "title": "Forwarding Rules",
+            "type": "array"
+          },
+          "health_check": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/HealthCheck"
+              }
+            ],
+            "nullable": true,
+            "x-omitempty": true
+          },
+          "health_check_path": {
+            "nullable": true,
+            "title": "Health Check Path",
+            "type": "string",
+            "x-omitempty": true
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "project_id": {
+            "nullable": true,
+            "title": "Project Id",
+            "type": "string",
+            "x-omitempty": true
+          },
+          "region": {
+            "nullable": true,
+            "title": "Region",
+            "type": "string",
+            "x-omitempty": true
+          },
+          "target_ids": {
+            "default": [],
+            "items": {
+              "type": "string"
+            },
+            "title": "Target Ids",
+            "type": "array",
+            "x-omitempty": true
+          }
+        },
+        "required": [
+          "name",
+          "forwarding_rules"
+        ],
+        "title": "CreateLoadBalancerRequest",
+        "type": "object"
+      },
+      "CreateMC2Request": {
+        "example": {
+          "image": "debian-13",
+          "ip_type": "public",
+          "login_method": "password",
+          "name": "my-instance",
+          "password": "Str0ng-Passw0rd",
+          "region": "dhaka-1",
+          "size": "s-1vcpu-1gb",
+          "tags": [
+            "web",
+            "production"
+          ]
+        },
+        "properties": {
+          "cxpanel_domain": {
+            "example": "panel.example.com",
+            "nullable": true,
+            "title": "Cxpanel Domain",
+            "type": "string",
+            "x-omitempty": true
+          },
+          "cxpanel_plan": {
+            "example": "pro",
+            "nullable": true,
+            "title": "Cxpanel Plan",
+            "type": "string",
+            "x-omitempty": true
+          },
+          "image": {
+            "example": "debian-13",
+            "title": "Image",
+            "type": "string"
+          },
+          "install_cxpanel": {
+            "default": false,
+            "title": "Install Cxpanel",
+            "type": "boolean",
+            "x-omitempty": true
+          },
+          "ip_type": {
+            "default": "public",
+            "enum": [
+              "public",
+              "nat"
+            ],
+            "title": "Ip Type",
+            "type": "string",
+            "x-omitempty": true
+          },
+          "login_method": {
+            "default": "key",
+            "enum": [
+              "password",
+              "key"
+            ],
+            "title": "Login Method",
+            "type": "string",
+            "x-omitempty": true
+          },
+          "name": {
+            "example": "my-instance",
+            "title": "Name",
+            "type": "string"
+          },
+          "password": {
+            "example": "Str0ng-Passw0rd",
+            "nullable": true,
+            "title": "Password",
+            "type": "string",
+            "x-omitempty": true
+          },
+          "project_id": {
+            "nullable": true,
+            "title": "Project Id",
+            "type": "string",
+            "x-omitempty": true
+          },
+          "region": {
+            "example": "dhaka-1",
+            "nullable": true,
+            "title": "Region",
+            "type": "string",
+            "x-omitempty": true
+          },
+          "size": {
+            "example": "s-1vcpu-1gb",
+            "title": "Size",
+            "type": "string"
+          },
+          "ssh_key_ids": {
+            "items": {
+              "type": "string"
+            },
+            "nullable": true,
+            "title": "Ssh Key Ids",
+            "type": "array",
+            "x-omitempty": true
+          },
+          "tags": {
+            "example": [
+              "web",
+              "production"
+            ],
+            "items": {
+              "type": "string"
+            },
+            "nullable": true,
+            "title": "Tags",
+            "type": "array",
+            "x-omitempty": true
+          },
+          "vpc_id": {
+            "nullable": true,
+            "title": "Vpc Id",
+            "type": "string",
+            "x-omitempty": true
+          }
+        },
+        "required": [
+          "name",
+          "image",
+          "size"
+        ],
+        "title": "CreateMC2Request",
+        "type": "object"
+      },
+      "CreateProjectRequest": {
+        "example": {
+          "name": "My Project",
+          "slug": "my-project"
+        },
+        "properties": {
+          "description": {
+            "nullable": true,
+            "title": "Description",
+            "type": "string",
+            "x-omitempty": true
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "slug": {
+            "nullable": true,
+            "title": "Slug",
+            "type": "string",
+            "x-omitempty": true
+          }
+        },
+        "required": [
+          "name"
+        ],
+        "title": "CreateProjectRequest",
+        "type": "object"
+      },
+      "DnsRecord": {
+        "properties": {
+          "content": {
+            "nullable": true,
+            "title": "Content",
+            "type": "string",
+            "x-omitempty": true
+          },
+          "fqdn": {
+            "nullable": true,
+            "title": "Fqdn",
+            "type": "string",
+            "x-omitempty": true
+          },
+          "id": {
+            "title": "Id",
+            "type": "string"
+          },
+          "name": {
+            "nullable": true,
+            "title": "Name",
+            "type": "string",
+            "x-omitempty": true
+          },
+          "priority": {
+            "nullable": true,
+            "title": "Priority",
+            "type": "integer",
+            "x-omitempty": true
+          },
+          "ttl": {
+            "nullable": true,
+            "title": "Ttl",
+            "type": "integer",
+            "x-omitempty": true
+          },
+          "type": {
+            "nullable": true,
+            "title": "Type",
+            "type": "string",
+            "x-omitempty": true
+          }
+        },
+        "required": [
+          "id"
+        ],
+        "title": "DnsRecord",
+        "type": "object"
+      },
+      "DnsZone": {
+        "properties": {
+          "created_at": {
+            "nullable": true,
+            "title": "Created At",
+            "type": "string",
+            "x-omitempty": true
+          },
+          "id": {
+            "title": "Id",
+            "type": "string"
+          },
+          "name": {
+            "nullable": true,
+            "title": "Name",
+            "type": "string",
+            "x-omitempty": true
+          },
+          "nameservers": {
+            "default": [],
+            "items": {
+              "type": "string"
+            },
+            "title": "Nameservers",
+            "type": "array",
+            "x-omitempty": true
+          },
+          "nameservers_seen": {
+            "default": [],
+            "items": {
+              "type": "string"
+            },
+            "title": "Nameservers Seen",
+            "type": "array",
+            "x-omitempty": true
+          },
+          "record": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/DnsRecord"
+              }
+            ],
+            "nullable": true,
+            "x-omitempty": true
+          },
+          "record_count": {
+            "nullable": true,
+            "title": "Record Count",
+            "type": "integer",
+            "x-omitempty": true
+          },
+          "records": {
+            "items": {
+              "$ref": "#/components/schemas/DnsRecord"
+            },
+            "nullable": true,
+            "title": "Records",
+            "type": "array",
+            "x-omitempty": true
+          },
+          "status": {
+            "nullable": true,
+            "title": "Status",
+            "type": "string",
+            "x-omitempty": true
+          }
+        },
+        "required": [
+          "id"
+        ],
+        "title": "DnsZone",
+        "type": "object"
+      },
+      "Error": {
+        "properties": {
+          "code": {
+            "type": "string"
+          },
+          "detail": {}
+        },
+        "required": [
+          "code"
+        ],
+        "type": "object"
+      },
+      "Firewall": {
+        "properties": {
+          "created_at": {
+            "nullable": true,
+            "title": "Created At",
+            "type": "string",
+            "x-omitempty": true
+          },
+          "id": {
+            "title": "Id",
+            "type": "string"
+          },
+          "inbound_rules": {
+            "default": [],
+            "items": {
+              "$ref": "#/components/schemas/FirewallRule"
+            },
+            "title": "Inbound Rules",
+            "type": "array",
+            "x-omitempty": true
+          },
+          "name": {
+            "nullable": true,
+            "title": "Name",
+            "type": "string",
+            "x-omitempty": true
+          },
+          "outbound_rules": {
+            "default": [],
+            "items": {
+              "$ref": "#/components/schemas/FirewallRule"
+            },
+            "title": "Outbound Rules",
+            "type": "array",
+            "x-omitempty": true
+          },
+          "server_count": {
+            "nullable": true,
+            "title": "Server Count",
+            "type": "integer",
+            "x-omitempty": true
+          },
+          "server_ids": {
+            "default": [],
+            "items": {
+              "type": "string"
+            },
+            "title": "Server Ids",
+            "type": "array",
+            "x-omitempty": true
+          },
+          "status": {
+            "nullable": true,
+            "title": "Status",
+            "type": "string",
+            "x-omitempty": true
+          },
+          "tags": {
+            "default": [],
+            "items": {
+              "type": "string"
+            },
+            "title": "Tags",
+            "type": "array",
+            "x-omitempty": true
+          }
+        },
+        "required": [
+          "id"
+        ],
+        "title": "Firewall",
+        "type": "object"
+      },
+      "FirewallRule": {
+        "properties": {
+          "destinations": {
+            "items": {
+              "type": "string"
+            },
+            "nullable": true,
+            "title": "Destinations",
+            "type": "array",
+            "x-omitempty": true
+          },
+          "ports": {
+            "nullable": true,
+            "title": "Ports",
+            "type": "string",
+            "x-omitempty": true
+          },
+          "protocol": {
+            "nullable": true,
+            "title": "Protocol",
+            "type": "string",
+            "x-omitempty": true
+          },
+          "sources": {
+            "items": {
+              "type": "string"
+            },
+            "nullable": true,
+            "title": "Sources",
+            "type": "array",
+            "x-omitempty": true
+          }
+        },
+        "title": "FirewallRule",
+        "type": "object"
+      },
+      "ForwardingRule": {
+        "properties": {
+          "entry_port": {
+            "title": "Entry Port",
+            "type": "integer"
+          },
+          "entry_protocol": {
+            "default": "tcp",
+            "title": "Entry Protocol",
+            "type": "string",
+            "x-omitempty": true
+          },
+          "target_port": {
+            "title": "Target Port",
+            "type": "integer"
+          },
+          "target_protocol": {
+            "nullable": true,
+            "title": "Target Protocol",
+            "type": "string",
+            "x-omitempty": true
+          }
+        },
+        "required": [
+          "entry_port",
+          "target_port"
+        ],
+        "title": "ForwardingRule",
+        "type": "object"
+      },
+      "ForwardingRuleOut": {
+        "properties": {
+          "entry_port": {
+            "nullable": true,
+            "title": "Entry Port",
+            "type": "integer",
+            "x-omitempty": true
+          },
+          "entry_protocol": {
+            "nullable": true,
+            "title": "Entry Protocol",
+            "type": "string",
+            "x-omitempty": true
+          },
+          "target_port": {
+            "nullable": true,
+            "title": "Target Port",
+            "type": "integer",
+            "x-omitempty": true
+          },
+          "target_protocol": {
+            "nullable": true,
+            "title": "Target Protocol",
+            "type": "string",
+            "x-omitempty": true
+          }
+        },
+        "title": "ForwardingRuleOut",
+        "type": "object"
+      },
+      "HealthCheck": {
+        "properties": {
+          "path": {
+            "default": "/",
+            "title": "Path",
+            "type": "string",
+            "x-omitempty": true
+          },
+          "port": {
+            "nullable": true,
+            "title": "Port",
+            "type": "integer",
+            "x-omitempty": true
+          },
+          "protocol": {
+            "default": "tcp",
+            "title": "Protocol",
+            "type": "string",
+            "x-omitempty": true
+          }
+        },
+        "title": "HealthCheck",
+        "type": "object"
+      },
+      "HealthCheckOut": {
+        "properties": {
+          "path": {
+            "nullable": true,
+            "title": "Path",
+            "type": "string",
+            "x-omitempty": true
+          },
+          "port": {
+            "nullable": true,
+            "title": "Port",
+            "type": "integer",
+            "x-omitempty": true
+          },
+          "protocol": {
+            "nullable": true,
+            "title": "Protocol",
+            "type": "string",
+            "x-omitempty": true
+          }
+        },
+        "title": "HealthCheckOut",
+        "type": "object"
+      },
+      "ImportIn": {
+        "properties": {
+          "text": {
+            "title": "Text",
+            "type": "string"
+          }
+        },
+        "required": [
+          "text"
+        ],
+        "title": "ImportIn",
+        "type": "object"
+      },
+      "LoadBalancer": {
+        "properties": {
+          "algorithm": {
+            "nullable": true,
+            "title": "Algorithm",
+            "type": "string",
+            "x-omitempty": true
+          },
+          "created_at": {
+            "nullable": true,
+            "title": "Created At",
+            "type": "string",
+            "x-omitempty": true
+          },
+          "forwarding_rules": {
+            "default": [],
+            "items": {
+              "$ref": "#/components/schemas/ForwardingRuleOut"
+            },
+            "title": "Forwarding Rules",
+            "type": "array",
+            "x-omitempty": true
+          },
+          "health_check": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/HealthCheckOut"
+              }
+            ],
+            "nullable": true,
+            "x-omitempty": true
+          },
+          "id": {
+            "title": "Id",
+            "type": "string"
+          },
+          "ip_address": {
+            "nullable": true,
+            "title": "Ip Address",
+            "type": "string",
+            "x-omitempty": true
+          },
+          "name": {
+            "nullable": true,
+            "title": "Name",
+            "type": "string",
+            "x-omitempty": true
+          },
+          "region": {
+            "nullable": true,
+            "title": "Region",
+            "type": "string",
+            "x-omitempty": true
+          },
+          "status": {
+            "nullable": true,
+            "title": "Status",
+            "type": "string",
+            "x-omitempty": true
+          },
+          "status_detail": {
+            "nullable": true,
+            "title": "Status Detail",
+            "type": "string",
+            "x-omitempty": true
+          },
+          "target_ids": {
+            "default": [],
+            "items": {
+              "type": "string"
+            },
+            "title": "Target Ids",
+            "type": "array",
+            "x-omitempty": true
+          }
+        },
+        "required": [
+          "id"
+        ],
+        "title": "LoadBalancer",
+        "type": "object"
+      },
+      "LoginMethodRequest": {
+        "properties": {
+          "login_method": {
+            "enum": [
+              "password",
+              "key"
+            ],
+            "title": "Login Method",
+            "type": "string"
+          },
+          "password": {
+            "nullable": true,
+            "title": "Password",
+            "type": "string",
+            "x-omitempty": true
+          }
+        },
+        "required": [
+          "login_method"
+        ],
+        "title": "LoginMethodRequest",
+        "type": "object"
+      },
+      "Project": {
+        "properties": {
+          "created_at": {
+            "nullable": true,
+            "title": "Created At",
+            "type": "string",
+            "x-omitempty": true
+          },
+          "description": {
+            "nullable": true,
+            "title": "Description",
+            "type": "string",
+            "x-omitempty": true
+          },
+          "id": {
+            "title": "Id",
+            "type": "string"
+          },
+          "is_default": {
+            "nullable": true,
+            "title": "Is Default",
+            "type": "boolean",
+            "x-omitempty": true
+          },
+          "name": {
+            "nullable": true,
+            "title": "Name",
+            "type": "string",
+            "x-omitempty": true
+          },
+          "slug": {
+            "nullable": true,
+            "title": "Slug",
+            "type": "string",
+            "x-omitempty": true
+          },
+          "updated_at": {
+            "nullable": true,
+            "title": "Updated At",
+            "type": "string",
+            "x-omitempty": true
+          }
+        },
+        "required": [
+          "id"
+        ],
+        "title": "Project",
+        "type": "object"
+      },
+      "RecordIn": {
+        "properties": {
+          "content": {
+            "title": "Content",
+            "type": "string"
+          },
+          "name": {
+            "default": "@",
+            "title": "Name",
+            "type": "string",
+            "x-omitempty": true
+          },
+          "priority": {
+            "nullable": true,
+            "title": "Priority",
+            "type": "integer",
+            "x-omitempty": true
+          },
+          "ttl": {
+            "default": 3600,
+            "nullable": true,
+            "title": "Ttl",
+            "type": "integer",
+            "x-omitempty": true
+          },
+          "type": {
+            "title": "Type",
+            "type": "string"
+          }
+        },
+        "required": [
+          "type",
+          "content"
+        ],
+        "title": "RecordIn",
+        "type": "object"
+      },
+      "ResizeMC2Request": {
+        "example": {
+          "size": "s-2vcpu-2gb"
+        },
+        "properties": {
+          "size": {
+            "example": "s-2vcpu-2gb",
+            "title": "Size",
+            "type": "string"
+          }
+        },
+        "required": [
+          "size"
+        ],
+        "title": "ResizeMC2Request",
+        "type": "object"
+      },
+      "RuleIn": {
+        "properties": {
+          "destinations": {
+            "items": {
+              "type": "string"
+            },
+            "nullable": true,
+            "title": "Destinations",
+            "type": "array",
+            "x-omitempty": true
+          },
+          "ports": {
+            "nullable": true,
+            "title": "Ports",
+            "type": "string",
+            "x-omitempty": true
+          },
+          "protocol": {
+            "title": "Protocol",
+            "type": "string"
+          },
+          "sources": {
+            "items": {
+              "type": "string"
+            },
+            "nullable": true,
+            "title": "Sources",
+            "type": "array",
+            "x-omitempty": true
+          }
+        },
+        "required": [
+          "protocol"
+        ],
+        "title": "RuleIn",
+        "type": "object"
+      },
+      "SSHKeyCreate": {
+        "properties": {
+          "name": {
+            "example": "laptop",
+            "title": "Name",
+            "type": "string"
+          },
+          "public_key": {
+            "example": "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAA... me@laptop",
+            "title": "Public Key",
+            "type": "string"
+          }
+        },
+        "required": [
+          "name",
+          "public_key"
+        ],
+        "title": "SSHKeyCreate",
+        "type": "object"
+      },
+      "SSHKeyOut": {
+        "properties": {
+          "created_at": {
+            "format": "date-time",
+            "nullable": true,
+            "title": "Created At",
+            "type": "string",
+            "x-omitempty": true
+          },
+          "fingerprint": {
+            "title": "Fingerprint",
+            "type": "string"
+          },
+          "id": {
+            "title": "Id",
+            "type": "string"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "public_key": {
+            "title": "Public Key",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "public_key",
+          "fingerprint"
+        ],
+        "title": "SSHKeyOut",
+        "type": "object"
+      },
+      "SSHKeyUpdate": {
+        "properties": {
+          "name": {
+            "nullable": true,
+            "title": "Name",
+            "type": "string",
+            "x-omitempty": true
+          }
+        },
+        "title": "SSHKeyUpdate",
+        "type": "object"
+      },
+      "Server": {
+        "properties": {
+          "access": {
+            "nullable": true,
+            "title": "Access",
+            "type": "object",
+            "x-omitempty": true
+          },
+          "backup_policy": {
+            "nullable": true,
+            "title": "Backup Policy",
+            "type": "object",
+            "x-omitempty": true
+          },
+          "cpu": {
+            "nullable": true,
+            "title": "Cpu",
+            "type": "integer",
+            "x-omitempty": true
+          },
+          "created_at": {
+            "nullable": true,
+            "title": "Created At",
+            "type": "string",
+            "x-omitempty": true
+          },
+          "cxpanel": {
+            "nullable": true,
+            "title": "Cxpanel",
+            "type": "object",
+            "x-omitempty": true
+          },
+          "disk": {
+            "nullable": true,
+            "title": "Disk",
+            "type": "integer",
+            "x-omitempty": true
+          },
+          "id": {
+            "title": "Id",
+            "type": "string"
+          },
+          "image": {
+            "nullable": true,
+            "title": "Image",
+            "type": "string",
+            "x-omitempty": true
+          },
+          "ip_address": {
+            "nullable": true,
+            "title": "Ip Address",
+            "type": "string",
+            "x-omitempty": true
+          },
+          "ip_type": {
+            "nullable": true,
+            "title": "Ip Type",
+            "type": "string",
+            "x-omitempty": true
+          },
+          "login_method": {
+            "nullable": true,
+            "title": "Login Method",
+            "type": "string",
+            "x-omitempty": true
+          },
+          "memory": {
+            "nullable": true,
+            "title": "Memory",
+            "type": "integer",
+            "x-omitempty": true
+          },
+          "name": {
+            "nullable": true,
+            "title": "Name",
+            "type": "string",
+            "x-omitempty": true
+          },
+          "private_ip": {
+            "nullable": true,
+            "title": "Private Ip",
+            "type": "string",
+            "x-omitempty": true
+          },
+          "progress": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/ServerProgress"
+              }
+            ],
+            "nullable": true,
+            "x-omitempty": true
+          },
+          "project_id": {
+            "nullable": true,
+            "title": "Project Id",
+            "type": "string",
+            "x-omitempty": true
+          },
+          "region": {
+            "nullable": true,
+            "title": "Region",
+            "type": "string",
+            "x-omitempty": true
+          },
+          "resize": {
+            "nullable": true,
+            "title": "Resize",
+            "type": "object",
+            "x-omitempty": true
+          },
+          "restore": {
+            "nullable": true,
+            "title": "Restore",
+            "type": "object",
+            "x-omitempty": true
+          },
+          "size": {
+            "nullable": true,
+            "title": "Size",
+            "type": "string",
+            "x-omitempty": true
+          },
+          "ssh_key_ids": {
+            "default": [],
+            "items": {
+              "type": "string"
+            },
+            "title": "Ssh Key Ids",
+            "type": "array",
+            "x-omitempty": true
+          },
+          "status": {
+            "nullable": true,
+            "title": "Status",
+            "type": "string",
+            "x-omitempty": true
+          },
+          "tags": {
+            "default": [],
+            "items": {
+              "type": "string"
+            },
+            "title": "Tags",
+            "type": "array",
+            "x-omitempty": true
+          },
+          "updated_at": {
+            "nullable": true,
+            "title": "Updated At",
+            "type": "string",
+            "x-omitempty": true
+          },
+          "vpc_id": {
+            "nullable": true,
+            "title": "Vpc Id",
+            "type": "string",
+            "x-omitempty": true
+          }
+        },
+        "required": [
+          "id"
+        ],
+        "title": "Server",
+        "type": "object"
+      },
+      "ServerProgress": {
+        "properties": {
+          "percent": {
+            "nullable": true,
+            "title": "Percent",
+            "type": "integer",
+            "x-omitempty": true
+          },
+          "step": {
+            "nullable": true,
+            "title": "Step",
+            "type": "string",
+            "x-omitempty": true
+          }
+        },
+        "title": "ServerProgress",
+        "type": "object"
+      },
+      "SnapshotMC2Request": {
+        "example": {
+          "name": "my-snapshot"
+        },
+        "properties": {
+          "name": {
+            "default": "",
+            "example": "my-snapshot",
+            "maxLength": 64,
+            "title": "Name",
+            "type": "string",
+            "x-omitempty": true
+          }
+        },
+        "title": "SnapshotMC2Request",
+        "type": "object"
+      },
+      "TargetRequest": {
+        "properties": {
+          "server_id": {
+            "title": "Server Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "server_id"
+        ],
+        "title": "TargetRequest",
+        "type": "object"
+      },
+      "UpdateFirewallRequest": {
+        "properties": {
+          "inbound_rules": {
+            "items": {
+              "$ref": "#/components/schemas/RuleIn"
+            },
+            "nullable": true,
+            "title": "Inbound Rules",
+            "type": "array",
+            "x-omitempty": true
+          },
+          "name": {
+            "nullable": true,
+            "title": "Name",
+            "type": "string",
+            "x-omitempty": true
+          },
+          "outbound_rules": {
+            "items": {
+              "$ref": "#/components/schemas/RuleIn"
+            },
+            "nullable": true,
+            "title": "Outbound Rules",
+            "type": "array",
+            "x-omitempty": true
+          },
+          "server_ids": {
+            "items": {
+              "type": "string"
+            },
+            "nullable": true,
+            "title": "Server Ids",
+            "type": "array",
+            "x-omitempty": true
+          },
+          "tags": {
+            "items": {
+              "type": "string"
+            },
+            "nullable": true,
+            "title": "Tags",
+            "type": "array",
+            "x-omitempty": true
+          }
+        },
+        "title": "UpdateFirewallRequest",
+        "type": "object"
+      },
+      "UpdateLoadBalancerRequest": {
+        "properties": {
+          "algorithm": {
+            "nullable": true,
+            "title": "Algorithm",
+            "type": "string",
+            "x-omitempty": true
+          },
+          "forwarding_rules": {
+            "items": {
+              "$ref": "#/components/schemas/ForwardingRule"
+            },
+            "nullable": true,
+            "title": "Forwarding Rules",
+            "type": "array",
+            "x-omitempty": true
+          },
+          "health_check": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/HealthCheck"
+              }
+            ],
+            "nullable": true,
+            "x-omitempty": true
+          },
+          "name": {
+            "nullable": true,
+            "title": "Name",
+            "type": "string",
+            "x-omitempty": true
+          },
+          "target_ids": {
+            "items": {
+              "type": "string"
+            },
+            "nullable": true,
+            "title": "Target Ids",
+            "type": "array",
+            "x-omitempty": true
+          }
+        },
+        "title": "UpdateLoadBalancerRequest",
+        "type": "object"
+      },
+      "UpdateMC2Request": {
+        "example": {
+          "name": "my-instance-updated",
+          "tags": [
+            "web",
+            "production",
+            "updated"
+          ]
+        },
+        "properties": {
+          "name": {
+            "example": "my-instance-updated",
+            "nullable": true,
+            "title": "Name",
+            "type": "string",
+            "x-omitempty": true
+          },
+          "tags": {
+            "example": [
+              "web",
+              "production",
+              "updated"
+            ],
+            "items": {
+              "type": "string"
+            },
+            "nullable": true,
+            "title": "Tags",
+            "type": "array",
+            "x-omitempty": true
+          }
+        },
+        "title": "UpdateMC2Request",
+        "type": "object"
+      },
+      "UpdateProjectRequest": {
+        "example": {
+          "name": "Updated Project Name"
+        },
+        "properties": {
+          "description": {
+            "nullable": true,
+            "title": "Description",
+            "type": "string",
+            "x-omitempty": true
+          },
+          "name": {
+            "nullable": true,
+            "title": "Name",
+            "type": "string",
+            "x-omitempty": true
+          }
+        },
+        "title": "UpdateProjectRequest",
+        "type": "object"
+      },
+      "ZoneIn": {
+        "properties": {
+          "name": {
+            "title": "Name",
+            "type": "string"
+          }
+        },
+        "required": [
+          "name"
+        ],
+        "title": "ZoneIn",
+        "type": "object"
+      }
+    },
+    "securitySchemes": {
+      "bearer": {
+        "scheme": "bearer",
+        "type": "http"
+      }
+    }
+  },
+  "info": {
+    "description": "Generated by scripts/filter_openapi.py from the CloudXino API. Do not edit by hand.",
+    "title": "CloudXino API (automation subset)",
+    "version": "1.0.0"
+  },
+  "openapi": "3.0.3",
+  "paths": {
+    "/v1/dns/zones": {
+      "get": {
+        "operationId": "list_zones_v1_dns_zones_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/DnsZone"
+                  },
+                  "title": "Response List Zones V1 Dns Zones Get",
+                  "type": "array"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "List Zones",
+        "tags": [
+          "dns"
+        ]
+      },
+      "post": {
+        "operationId": "create_zone_v1_dns_zones_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ZoneIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DnsZone"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Create Zone",
+        "tags": [
+          "dns"
+        ]
+      }
+    },
+    "/v1/dns/zones/{zone_id}": {
+      "delete": {
+        "operationId": "delete_zone_v1_dns_zones__zone_id__delete",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "zone_id",
+            "required": true,
+            "schema": {
+              "title": "Zone Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Delete Zone",
+        "tags": [
+          "dns"
+        ]
+      },
+      "get": {
+        "operationId": "get_zone_v1_dns_zones__zone_id__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "zone_id",
+            "required": true,
+            "schema": {
+              "title": "Zone Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DnsZone"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Get Zone",
+        "tags": [
+          "dns"
+        ]
+      }
+    },
+    "/v1/dns/zones/{zone_id}/check": {
+      "post": {
+        "operationId": "check_zone_v1_dns_zones__zone_id__check_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "zone_id",
+            "required": true,
+            "schema": {
+              "title": "Zone Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Check Zone",
+        "tags": [
+          "dns"
+        ]
+      }
+    },
+    "/v1/dns/zones/{zone_id}/export": {
+      "get": {
+        "operationId": "export_zone_v1_dns_zones__zone_id__export_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "zone_id",
+            "required": true,
+            "schema": {
+              "title": "Zone Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Export Zone",
+        "tags": [
+          "dns"
+        ]
+      }
+    },
+    "/v1/dns/zones/{zone_id}/import": {
+      "post": {
+        "operationId": "import_zone_v1_dns_zones__zone_id__import_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "zone_id",
+            "required": true,
+            "schema": {
+              "title": "Zone Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ImportIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Import Zone",
+        "tags": [
+          "dns"
+        ]
+      }
+    },
+    "/v1/dns/zones/{zone_id}/records": {
+      "post": {
+        "operationId": "add_record_v1_dns_zones__zone_id__records_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "zone_id",
+            "required": true,
+            "schema": {
+              "title": "Zone Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RecordIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DnsZone"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Add Record",
+        "tags": [
+          "dns"
+        ]
+      }
+    },
+    "/v1/dns/zones/{zone_id}/records/{record_id}": {
+      "delete": {
+        "operationId": "delete_record_v1_dns_zones__zone_id__records__record_id__delete",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "zone_id",
+            "required": true,
+            "schema": {
+              "title": "Zone Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "record_id",
+            "required": true,
+            "schema": {
+              "title": "Record Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DnsZone"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Delete Record",
+        "tags": [
+          "dns"
+        ]
+      },
+      "get": {
+        "operationId": "get_record_v1_dns_zones__zone_id__records__record_id__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "zone_id",
+            "required": true,
+            "schema": {
+              "title": "Zone Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "record_id",
+            "required": true,
+            "schema": {
+              "title": "Record Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DnsRecord"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Get Record",
+        "tags": [
+          "dns"
+        ]
+      },
+      "patch": {
+        "operationId": "update_record_v1_dns_zones__zone_id__records__record_id__patch",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "zone_id",
+            "required": true,
+            "schema": {
+              "title": "Zone Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "record_id",
+            "required": true,
+            "schema": {
+              "title": "Record Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RecordIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DnsZone"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Update Record",
+        "tags": [
+          "dns"
+        ]
+      }
+    },
+    "/v1/firewalls": {
+      "get": {
+        "operationId": "list_firewalls_v1_firewalls_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/Firewall"
+                  },
+                  "title": "Response List Firewalls V1 Firewalls Get",
+                  "type": "array"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "List Firewalls",
+        "tags": [
+          "firewalls"
+        ]
+      },
+      "post": {
+        "operationId": "create_firewall_v1_firewalls_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateFirewallRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Firewall"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Create Firewall",
+        "tags": [
+          "firewalls"
+        ]
+      }
+    },
+    "/v1/firewalls/{firewall_id}": {
+      "delete": {
+        "operationId": "delete_firewall_v1_firewalls__firewall_id__delete",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "firewall_id",
+            "required": true,
+            "schema": {
+              "title": "Firewall Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Delete Firewall",
+        "tags": [
+          "firewalls"
+        ]
+      },
+      "get": {
+        "operationId": "get_firewall_v1_firewalls__firewall_id__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "firewall_id",
+            "required": true,
+            "schema": {
+              "title": "Firewall Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Firewall"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Get Firewall",
+        "tags": [
+          "firewalls"
+        ]
+      },
+      "patch": {
+        "operationId": "update_firewall_v1_firewalls__firewall_id__patch",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "firewall_id",
+            "required": true,
+            "schema": {
+              "title": "Firewall Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateFirewallRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Firewall"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Update Firewall",
+        "tags": [
+          "firewalls"
+        ]
+      }
+    },
+    "/v1/firewalls/{firewall_id}/assign": {
+      "post": {
+        "operationId": "assign_firewall_v1_firewalls__firewall_id__assign_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "firewall_id",
+            "required": true,
+            "schema": {
+              "title": "Firewall Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AssignRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Assign Firewall",
+        "tags": [
+          "firewalls"
+        ]
+      }
+    },
+    "/v1/firewalls/{firewall_id}/unassign": {
+      "post": {
+        "operationId": "unassign_firewall_v1_firewalls__firewall_id__unassign_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "firewall_id",
+            "required": true,
+            "schema": {
+              "title": "Firewall Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AssignRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Unassign Firewall",
+        "tags": [
+          "firewalls"
+        ]
+      }
+    },
+    "/v1/load-balancers": {
+      "get": {
+        "operationId": "list_load_balancers_v1_load_balancers_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/LoadBalancer"
+                  },
+                  "title": "Response List Load Balancers V1 Load Balancers Get",
+                  "type": "array"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "List Load Balancers",
+        "tags": [
+          "networking"
+        ]
+      },
+      "post": {
+        "operationId": "create_load_balancer_v1_load_balancers_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateLoadBalancerRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LoadBalancer"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Create Load Balancer",
+        "tags": [
+          "networking"
+        ]
+      }
+    },
+    "/v1/load-balancers/{lb_id}": {
+      "delete": {
+        "operationId": "delete_load_balancer_v1_load_balancers__lb_id__delete",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "lb_id",
+            "required": true,
+            "schema": {
+              "title": "Lb Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Delete Load Balancer",
+        "tags": [
+          "networking"
+        ]
+      },
+      "get": {
+        "operationId": "get_load_balancer_v1_load_balancers__lb_id__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "lb_id",
+            "required": true,
+            "schema": {
+              "title": "Lb Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LoadBalancer"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Get Load Balancer",
+        "tags": [
+          "networking"
+        ]
+      },
+      "patch": {
+        "operationId": "update_load_balancer_v1_load_balancers__lb_id__patch",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "lb_id",
+            "required": true,
+            "schema": {
+              "title": "Lb Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateLoadBalancerRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LoadBalancer"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Update Load Balancer",
+        "tags": [
+          "networking"
+        ]
+      }
+    },
+    "/v1/load-balancers/{lb_id}/targets": {
+      "post": {
+        "operationId": "add_load_balancer_target_v1_load_balancers__lb_id__targets_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "lb_id",
+            "required": true,
+            "schema": {
+              "title": "Lb Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TargetRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LoadBalancer"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Add Load Balancer Target",
+        "tags": [
+          "networking"
+        ]
+      }
+    },
+    "/v1/load-balancers/{lb_id}/targets/{server_id}": {
+      "delete": {
+        "operationId": "remove_load_balancer_target_v1_load_balancers__lb_id__targets__server_id__delete",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "lb_id",
+            "required": true,
+            "schema": {
+              "title": "Lb Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "server_id",
+            "required": true,
+            "schema": {
+              "title": "Server Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LoadBalancer"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Remove Load Balancer Target",
+        "tags": [
+          "networking"
+        ]
+      }
+    },
+    "/v1/mc2": {
+      "get": {
+        "operationId": "list_mc2_instances_v1_mc2_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "project_id",
+            "required": false,
+            "schema": {
+              "nullable": true,
+              "title": "Project Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/Server"
+                  },
+                  "title": "Response List Mc2 Instances V1 Mc2 Get",
+                  "type": "array"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "List Mc2 Instances",
+        "tags": [
+          "mc2"
+        ]
+      },
+      "post": {
+        "operationId": "create_mc2_instance_v1_mc2_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateMC2Request"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Server"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Create Mc2 Instance",
+        "tags": [
+          "mc2"
+        ]
+      }
+    },
+    "/v1/mc2/options/images": {
+      "get": {
+        "operationId": "get_available_images_v1_mc2_options_images_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "region_id",
+            "required": false,
+            "schema": {
+              "nullable": true,
+              "title": "Region Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Get Available Images",
+        "tags": [
+          "mc2"
+        ]
+      }
+    },
+    "/v1/mc2/options/regions": {
+      "get": {
+        "operationId": "get_available_regions_v1_mc2_options_regions_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Get Available Regions",
+        "tags": [
+          "mc2"
+        ]
+      }
+    },
+    "/v1/mc2/options/sizes": {
+      "get": {
+        "operationId": "get_available_sizes_v1_mc2_options_sizes_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Get Available Sizes",
+        "tags": [
+          "mc2"
+        ]
+      }
+    },
+    "/v1/mc2/{instance_id}": {
+      "delete": {
+        "operationId": "delete_mc2_instance_v1_mc2__instance_id__delete",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "instance_id",
+            "required": true,
+            "schema": {
+              "title": "Instance Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Delete Mc2 Instance",
+        "tags": [
+          "mc2"
+        ]
+      },
+      "get": {
+        "operationId": "get_mc2_instance_v1_mc2__instance_id__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "instance_id",
+            "required": true,
+            "schema": {
+              "title": "Instance Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Server"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Get Mc2 Instance",
+        "tags": [
+          "mc2"
+        ]
+      },
+      "patch": {
+        "operationId": "update_mc2_instance_v1_mc2__instance_id__patch",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "instance_id",
+            "required": true,
+            "schema": {
+              "title": "Instance Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateMC2Request"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Server"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Update Mc2 Instance",
+        "tags": [
+          "mc2"
+        ]
+      }
+    },
+    "/v1/mc2/{instance_id}/backup-policy": {
+      "put": {
+        "operationId": "set_backup_policy_v1_mc2__instance_id__backup_policy_put",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "instance_id",
+            "required": true,
+            "schema": {
+              "title": "Instance Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/BackupPolicyRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Set Backup Policy",
+        "tags": [
+          "mc2"
+        ]
+      }
+    },
+    "/v1/mc2/{instance_id}/login-method": {
+      "put": {
+        "operationId": "set_mc2_login_method_v1_mc2__instance_id__login_method_put",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "instance_id",
+            "required": true,
+            "schema": {
+              "title": "Instance Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LoginMethodRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Set Mc2 Login Method",
+        "tags": [
+          "mc2"
+        ]
+      }
+    },
+    "/v1/mc2/{instance_id}/power-off": {
+      "post": {
+        "operationId": "power_off_mc2_instance_v1_mc2__instance_id__power_off_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "instance_id",
+            "required": true,
+            "schema": {
+              "title": "Instance Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Power Off Mc2 Instance",
+        "tags": [
+          "mc2"
+        ]
+      }
+    },
+    "/v1/mc2/{instance_id}/power-on": {
+      "post": {
+        "operationId": "power_on_mc2_instance_v1_mc2__instance_id__power_on_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "instance_id",
+            "required": true,
+            "schema": {
+              "title": "Instance Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Power On Mc2 Instance",
+        "tags": [
+          "mc2"
+        ]
+      }
+    },
+    "/v1/mc2/{instance_id}/reboot": {
+      "post": {
+        "operationId": "reboot_mc2_instance_v1_mc2__instance_id__reboot_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "instance_id",
+            "required": true,
+            "schema": {
+              "title": "Instance Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Reboot Mc2 Instance",
+        "tags": [
+          "mc2"
+        ]
+      }
+    },
+    "/v1/mc2/{instance_id}/resize": {
+      "post": {
+        "operationId": "resize_mc2_instance_v1_mc2__instance_id__resize_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "instance_id",
+            "required": true,
+            "schema": {
+              "title": "Instance Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ResizeMC2Request"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Resize Mc2 Instance",
+        "tags": [
+          "mc2"
+        ]
+      }
+    },
+    "/v1/mc2/{instance_id}/snapshot": {
+      "post": {
+        "operationId": "snapshot_mc2_instance_v1_mc2__instance_id__snapshot_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "instance_id",
+            "required": true,
+            "schema": {
+              "title": "Instance Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SnapshotMC2Request"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Snapshot Mc2 Instance",
+        "tags": [
+          "mc2"
+        ]
+      }
+    },
+    "/v1/mc2/{instance_id}/ssh-key": {
+      "get": {
+        "operationId": "download_ssh_key_v1_mc2__instance_id__ssh_key_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "instance_id",
+            "required": true,
+            "schema": {
+              "title": "Instance Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Download Ssh Key",
+        "tags": [
+          "mc2"
+        ]
+      }
+    },
+    "/v1/mc2/{instance_id}/volumes": {
+      "get": {
+        "operationId": "list_mc2_volumes_v1_mc2__instance_id__volumes_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "instance_id",
+            "required": true,
+            "schema": {
+              "title": "Instance Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "List Mc2 Volumes",
+        "tags": [
+          "mc2"
+        ]
+      },
+      "post": {
+        "operationId": "attach_mc2_volume_v1_mc2__instance_id__volumes_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "instance_id",
+            "required": true,
+            "schema": {
+              "title": "Instance Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AttachVolumeRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "202": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Attach Mc2 Volume",
+        "tags": [
+          "mc2"
+        ]
+      }
+    },
+    "/v1/mc2/{instance_id}/volumes/{volume_id}": {
+      "delete": {
+        "operationId": "detach_mc2_volume_v1_mc2__instance_id__volumes__volume_id__delete",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "instance_id",
+            "required": true,
+            "schema": {
+              "title": "Instance Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "volume_id",
+            "required": true,
+            "schema": {
+              "title": "Volume Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "202": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Detach Mc2 Volume",
+        "tags": [
+          "mc2"
+        ]
+      }
+    },
+    "/v1/projects": {
+      "get": {
+        "operationId": "list_projects_v1_projects_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/Project"
+                  },
+                  "title": "Response List Projects V1 Projects Get",
+                  "type": "array"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "List Projects",
+        "tags": [
+          "projects"
+        ]
+      },
+      "post": {
+        "operationId": "create_project_v1_projects_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateProjectRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Project"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Create Project",
+        "tags": [
+          "projects"
+        ]
+      }
+    },
+    "/v1/projects/{project_id}": {
+      "delete": {
+        "operationId": "delete_project_v1_projects__project_id__delete",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "project_id",
+            "required": true,
+            "schema": {
+              "title": "Project Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Delete Project",
+        "tags": [
+          "projects"
+        ]
+      },
+      "get": {
+        "operationId": "get_project_v1_projects__project_id__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "project_id",
+            "required": true,
+            "schema": {
+              "title": "Project Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Project"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Get Project",
+        "tags": [
+          "projects"
+        ]
+      },
+      "patch": {
+        "operationId": "update_project_v1_projects__project_id__patch",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "project_id",
+            "required": true,
+            "schema": {
+              "title": "Project Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateProjectRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Project"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Update Project",
+        "tags": [
+          "projects"
+        ]
+      }
+    },
+    "/v1/ssh-keys": {
+      "get": {
+        "operationId": "list_ssh_keys_v1_ssh_keys_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "name",
+            "required": false,
+            "schema": {
+              "nullable": true,
+              "title": "Name",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "fingerprint",
+            "required": false,
+            "schema": {
+              "nullable": true,
+              "title": "Fingerprint",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/SSHKeyOut"
+                  },
+                  "title": "Response List Ssh Keys V1 Ssh Keys Get",
+                  "type": "array"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "List Ssh Keys",
+        "tags": [
+          "ssh-keys"
+        ]
+      },
+      "post": {
+        "operationId": "create_ssh_key_v1_ssh_keys_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SSHKeyCreate"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SSHKeyOut"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Create Ssh Key",
+        "tags": [
+          "ssh-keys"
+        ]
+      }
+    },
+    "/v1/ssh-keys/{key_id}": {
+      "delete": {
+        "operationId": "delete_ssh_key_v1_ssh_keys__key_id__delete",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "key_id",
+            "required": true,
+            "schema": {
+              "title": "Key Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {}
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Delete Ssh Key",
+        "tags": [
+          "ssh-keys"
+        ]
+      },
+      "get": {
+        "operationId": "get_ssh_key_v1_ssh_keys__key_id__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "key_id",
+            "required": true,
+            "schema": {
+              "title": "Key Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SSHKeyOut"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Get Ssh Key",
+        "tags": [
+          "ssh-keys"
+        ]
+      },
+      "patch": {
+        "operationId": "update_ssh_key_v1_ssh_keys__key_id__patch",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "key_id",
+            "required": true,
+            "schema": {
+              "title": "Key Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SSHKeyUpdate"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SSHKeyOut"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Update Ssh Key",
+        "tags": [
+          "ssh-keys"
+        ]
+      }
+    },
+    "/v1/users/me": {
+      "get": {
+        "operationId": "get_current_user_info_v1_users_me_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Get Current User Info",
+        "tags": [
+          "users"
+        ]
+      }
+    }
+  },
+  "security": [
+    {
+      "bearer": []
+    }
+  ],
+  "servers": [
+    {
+      "url": "https://console.cloudxino.com/api"
+    }
+  ]
+}
