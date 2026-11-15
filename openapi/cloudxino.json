@@ -3454,7 +3454,7 @@
   ],
   "servers": [
     {
-      "url": "https://console.cloudxino.com/api"
+      "url": "https://cloudxino.com/api"
     }
   ]
 }
