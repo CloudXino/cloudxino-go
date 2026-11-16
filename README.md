@@ -55,7 +55,7 @@ func main() {
 ```
 
 Services: `Servers` (CC2), `Firewalls`, `LoadBalancers`, `DNS` (zones and records), `Projects`,
-`SSHKeys`, `ReservedIPs` and `Account` (who the key acts for).
+`SSHKeys`, `ReservedIPs`, `Clusters` (CKS, managed Kubernetes) and `Account` (who the key acts for).
 
 ### Reserved IPs
 
@@ -74,6 +74,23 @@ err = client.ReservedIPs.Delete(ctx, ip.Id)                 // unassigns first
 When no address is free (or reserved IPs are off for the API), `Create` and `Assign` return a 503
 with code `unavailable`; check it with `cloudxino.IsUnavailable(err)`. It is not retried.
 
+### Kubernetes clusters (CKS)
+
+```go
+cl, err := client.Clusters.Create(ctx, cloudxino.CreateClusterRequest{
+	Name:     "prod",
+	NodeSize: "k8s-2vcpu-4gb", // GET /v1/pricing → cluster.node_sizes
+})
+cl, err = client.Clusters.WaitActive(ctx, cl.Id, &cloudxino.WaitOptions{Timeout: 30 * time.Minute})
+kubeconfig, err := client.Clusters.Kubeconfig(ctx, cl.Id) // admin kubeconfig (YAML), only while active
+pool, err := client.Clusters.CreateNodePool(ctx, cl.Id, cloudxino.CreateNodePoolRequest{Name: "big", NodeSize: "k8s-4vcpu-8gb"})
+err = client.Clusters.Delete(ctx, cl.Id)
+err = client.Clusters.WaitDeleted(ctx, cl.Id, nil)
+```
+
+The cluster and node pool types are written by hand in `clusters.go`: the API does not publish a
+schema for these answers.
+
 ### Retries and idempotency
 
 - Requests are retried on `429`, maintenance (`503`, but not `503 unavailable`) and gateway errors, waiting as long as the API's
@@ -91,7 +108,8 @@ Errors from the API are `*cloudxino.APIError` with a stable `Code` (`not_found`,
 ### Waiting
 
 Creating, resizing and deleting take a while. `Servers.WaitReady`, `Servers.WaitResized`,
-`Servers.WaitDeleted`, `LoadBalancers.WaitActive` and `LoadBalancers.WaitDeleted` poll until the
+`Servers.WaitDeleted`, `LoadBalancers.WaitActive`, `LoadBalancers.WaitDeleted`, `Clusters.WaitActive` and
+`Clusters.WaitDeleted` poll until the
 change is done and return `*cloudxino.ErrStuck` when the resource ends in an error state.
 
 ## Development

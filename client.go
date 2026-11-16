@@ -49,6 +49,7 @@ type Client struct {
 	Projects      *ProjectsService
 	SSHKeys       *SSHKeysService
 	ReservedIPs   *ReservedIPsService
+	Clusters      *ClustersService
 	Account       *AccountService
 }
 
@@ -113,6 +114,7 @@ func NewClient(token string, opts ...Option) (*Client, error) {
 	c.Projects = &ProjectsService{c}
 	c.SSHKeys = &SSHKeysService{c}
 	c.ReservedIPs = &ReservedIPsService{c}
+	c.Clusters = &ClustersService{c}
 	c.Account = &AccountService{c}
 	return c, nil
 }
