@@ -4,6 +4,7 @@ import (
 	"context"
 	"net/http"
 	"net/url"
+	"time"
 )
 
 // Cluster states (Cluster.Status).
@@ -111,6 +112,21 @@ type CreateNodePoolRequest struct {
 	Autoscaling *NodePoolAutoscaling `json:"autoscaling,omitempty"`
 }
 
+// UpdateClusterRequest changes the cluster's settings; nil fields stay as they are.
+type UpdateClusterRequest struct {
+	Name      *string   `json:"name,omitempty"`
+	ProjectId *string   `json:"project_id,omitempty"`
+	Tags      *[]string `json:"tags,omitempty"`
+}
+
+// UpdateNodePoolRequest resizes a pool and/or replaces its labels and taints; nil fields stay.
+type UpdateNodePoolRequest struct {
+	Count       *int                 `json:"count,omitempty"`
+	Labels      *map[string]string   `json:"labels,omitempty"`
+	Taints      *[]Taint             `json:"taints,omitempty"`
+	Autoscaling *NodePoolAutoscaling `json:"autoscaling,omitempty"`
+}
+
 // ListClustersOptions filters List by project.
 type ListClustersOptions struct {
 	ProjectID string
@@ -118,7 +134,24 @@ type ListClustersOptions struct {
 
 // ClustersService manages CKS clusters (/v1/clusters): a managed control plane plus worker
 // node pools on the team's private network. Billed per hour (control plane + nodes) until deleted.
+//
+// The API answers a cluster's Get and ListNodePools at most once per 15 seconds per user (429
+// with Retry-After, which the client waits out), so the cluster waiters poll every 15s by default.
 type ClustersService struct{ c *Client }
+
+// ClusterPollInterval is the waiters' default interval: the API's limit for reading one cluster.
+const ClusterPollInterval = 15 * time.Second
+
+func clusterWait(opts *WaitOptions) *WaitOptions {
+	o := WaitOptions{Interval: ClusterPollInterval}
+	if opts != nil {
+		o = *opts
+		if o.Interval <= 0 {
+			o.Interval = ClusterPollInterval
+		}
+	}
+	return &o
+}
 
 func (s *ClustersService) List(ctx context.Context, opts *ListClustersOptions) ([]Cluster, error) {
 	q := url.Values{}
@@ -136,6 +169,11 @@ func (s *ClustersService) Get(ctx context.Context, id string) (*Cluster, error) 
 // When CKS is switched off on the platform it answers 501.
 func (s *ClustersService) Create(ctx context.Context, req CreateClusterRequest, idempotencyKey ...string) (*Cluster, error) {
 	return send[Cluster](ctx, s.c, http.MethodPost, "/v1/clusters", req, idempotencyKey)
+}
+
+// Update renames the cluster, moves it to another project or replaces its tags.
+func (s *ClustersService) Update(ctx context.Context, id string, req UpdateClusterRequest) (*Cluster, error) {
+	return send[Cluster](ctx, s.c, http.MethodPatch, "/v1/clusters"+p(id, "settings"), req, nil)
 }
 
 // Delete starts removing the cluster and its nodes; WaitDeleted waits until it is gone.
@@ -161,10 +199,21 @@ func (s *ClustersService) CreateNodePool(ctx context.Context, clusterID string, 
 	return send[NodePool](ctx, s.c, http.MethodPost, "/v1/clusters"+p(clusterID, "nodepools"), req, idempotencyKey)
 }
 
+// UpdateNodePool resizes a pool (nodes are added before any are removed) and/or replaces its
+// labels and taints. The cluster must be active; it is "updating" until the change is done.
+func (s *ClustersService) UpdateNodePool(ctx context.Context, clusterID, poolID string, req UpdateNodePoolRequest) (*NodePool, error) {
+	return send[NodePool](ctx, s.c, http.MethodPatch, "/v1/clusters"+p(clusterID, "nodepools", poolID), req, nil)
+}
+
+// DeleteNodePool starts removing a pool and its nodes.
+func (s *ClustersService) DeleteNodePool(ctx context.Context, clusterID, poolID string) error {
+	return del(ctx, s.c, "/v1/clusters"+p(clusterID, "nodepools", poolID))
+}
+
 // WaitActive waits until the cluster is active (built, or done changing a node pool).
 func (s *ClustersService) WaitActive(ctx context.Context, id string, opts *WaitOptions) (*Cluster, error) {
 	var last *Cluster
-	err := waitFor(ctx, opts, func(ctx context.Context) (bool, error) {
+	err := waitFor(ctx, clusterWait(opts), func(ctx context.Context) (bool, error) {
 		cl, err := s.Get(ctx, id)
 		if err != nil {
 			return false, err
@@ -183,7 +232,7 @@ func (s *ClustersService) WaitActive(ctx context.Context, id string, opts *WaitO
 
 // WaitDeleted waits until the cluster is gone.
 func (s *ClustersService) WaitDeleted(ctx context.Context, id string, opts *WaitOptions) error {
-	return waitFor(ctx, opts, func(ctx context.Context) (bool, error) {
+	return waitFor(ctx, clusterWait(opts), func(ctx context.Context) (bool, error) {
 		cl, err := s.Get(ctx, id)
 		if IsNotFound(err) {
 			return true, nil

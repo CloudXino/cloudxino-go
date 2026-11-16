@@ -193,3 +193,53 @@ func TestClustersWaitDeleted(t *testing.T) {
 		t.Fatalf("calls=%d err=%v", len(f.calls), err)
 	}
 }
+
+func TestClustersUpdateAndNodePoolChanges(t *testing.T) {
+	c, f := newFake(t, func(w http.ResponseWriter, r *http.Request, n int) {
+		switch n {
+		case 1:
+			cl := cluster("active")
+			cl["name"] = "prod-2"
+			writeJSON(w, 200, cl)
+		case 2:
+			writeJSON(w, 200, map[string]any{"id": "np1", "name": "default", "cluster_id": "c1", "count": 4, "status": "scaling"})
+		default:
+			writeJSON(w, 200, map[string]any{"message": "Node pool deletion started"})
+		}
+	})
+	ctx := context.Background()
+	name := "prod-2"
+	cl, err := c.Clusters.Update(ctx, "c1", UpdateClusterRequest{Name: &name})
+	if err != nil || cl.Name != "prod-2" {
+		t.Fatalf("cl=%v err=%v", cl, err)
+	}
+	if got := f.calls[0]; got.Method != http.MethodPatch || got.Path != "/api/v1/clusters/c1/settings" || got.Body != `{"name":"prod-2"}` {
+		t.Fatalf("update sent %s %s %s", got.Method, got.Path, got.Body)
+	}
+	four := 4
+	pool, err := c.Clusters.UpdateNodePool(ctx, "c1", "np1", UpdateNodePoolRequest{Count: &four})
+	if err != nil || pool.Count != 4 {
+		t.Fatalf("pool=%v err=%v", pool, err)
+	}
+	if got := f.calls[1]; got.Method != http.MethodPatch || got.Path != "/api/v1/clusters/c1/nodepools/np1" || got.Body != `{"count":4}` {
+		t.Fatalf("resize sent %s %s %s", got.Method, got.Path, got.Body)
+	}
+	if err := c.Clusters.DeleteNodePool(ctx, "c1", "np1"); err != nil {
+		t.Fatal(err)
+	}
+	if got := f.calls[2]; got.Method != http.MethodDelete || got.Path != "/api/v1/clusters/c1/nodepools/np1" {
+		t.Fatalf("delete sent %s %s", got.Method, got.Path)
+	}
+}
+
+func TestClusterWaitDefaultsTo15s(t *testing.T) {
+	if o := clusterWait(nil); o.Interval != ClusterPollInterval {
+		t.Fatal(o.Interval)
+	}
+	if o := clusterWait(&WaitOptions{Timeout: time.Minute}); o.Interval != ClusterPollInterval || o.Timeout != time.Minute {
+		t.Fatal(o)
+	}
+	if o := clusterWait(&WaitOptions{Interval: time.Second}); o.Interval != time.Second {
+		t.Fatal(o.Interval)
+	}
+}

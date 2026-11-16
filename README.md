@@ -83,10 +83,15 @@ cl, err := client.Clusters.Create(ctx, cloudxino.CreateClusterRequest{
 })
 cl, err = client.Clusters.WaitActive(ctx, cl.Id, &cloudxino.WaitOptions{Timeout: 30 * time.Minute})
 kubeconfig, err := client.Clusters.Kubeconfig(ctx, cl.Id) // admin kubeconfig (YAML), only while active
+cl, err = client.Clusters.Update(ctx, cl.Id, cloudxino.UpdateClusterRequest{Name: &newName})
 pool, err := client.Clusters.CreateNodePool(ctx, cl.Id, cloudxino.CreateNodePoolRequest{Name: "big", NodeSize: "k8s-4vcpu-8gb"})
+pool, err = client.Clusters.UpdateNodePool(ctx, cl.Id, pool.Id, cloudxino.UpdateNodePoolRequest{Count: &four})
 err = client.Clusters.Delete(ctx, cl.Id)
 err = client.Clusters.WaitDeleted(ctx, cl.Id, nil)
 ```
+
+A cluster can be read at most once per 15 seconds per user; the cluster waiters poll at that pace
+(`cloudxino.ClusterPollInterval`) and the client waits out a `429` by its `Retry-After`.
 
 The cluster and node pool types are written by hand in `clusters.go`: the API does not publish a
 schema for these answers.
