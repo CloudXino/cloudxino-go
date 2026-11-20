@@ -55,7 +55,8 @@ func main() {
 ```
 
 Services: `Servers` (CC2), `Firewalls`, `LoadBalancers`, `DNS` (zones and records), `Projects`,
-`SSHKeys`, `ReservedIPs`, `Clusters` (CKS, managed Kubernetes) and `Account` (who the key acts for).
+`SSHKeys`, `ReservedIPs`, `Clusters` (CKS, managed Kubernetes), `ContainerHosts` (Managed Container
+Service) and `Account` (who the key acts for).
 
 ### Reserved IPs
 
@@ -96,6 +97,37 @@ A cluster can be read at most once per 15 seconds per user; the cluster waiters 
 The cluster and node pool types are written by hand in `clusters.go`: the API does not publish a
 schema for these answers.
 
+### Managed containers (MCS)
+
+A container host is a CC2 server of the team's own with Docker, Compose, Traefik (automatic Let's
+Encrypt certificates) and Portainer. Deploy a `docker-compose.yml` to it with env vars and domains.
+
+```go
+opts, err := client.ContainerHosts.Options(ctx) // opts.Enabled, opts.Plans (slugs and monthly prices)
+h, err := client.ContainerHosts.Create(ctx, cloudxino.CreateContainerHostRequest{Name: "apps", Plan: "s-2vcpu-4gb"})
+h, err = client.ContainerHosts.WaitReady(ctx, h.Id, &cloudxino.WaitOptions{Timeout: 30 * time.Minute})
+
+// save env vars and domains first (deploy=false), then make one deployment with all of it
+_, err = client.ContainerHosts.SetEnv(ctx, h.Id, map[string]string{"DB_PASSWORD": pw}, false)
+_, err = client.ContainerHosts.SetDomains(ctx, h.Id, []cloudxino.ContainerDomain{{Domain: "app.example.com", Service: "web", Port: 8080}}, false)
+dep, err := client.ContainerHosts.Deploy(ctx, h.Id, cloudxino.DeployRequest{Compose: &compose})
+dep, err = client.ContainerHosts.WaitDeployment(ctx, h.Id, dep.Id, nil) // a failure is *ErrStuck with the end of the output
+
+st, err := client.ContainerHosts.Status(ctx, h.Id) // containers, disk, certificates, domain DNS
+logs, err := client.ContainerHosts.Logs(ctx, h.Id, "app-web-1", 200)
+err = client.ContainerHosts.ContainerAction(ctx, h.Id, "app-web-1", cloudxino.ContainerRestart)
+h, err = client.ContainerHosts.ChangePlan(ctx, h.Id, "s-4vcpu-8gb") // resizes the server (about a minute of downtime)
+h, err = client.ContainerHosts.WaitPlan(ctx, h.Id, "s-4vcpu-8gb", nil)
+dep, err = client.ContainerHosts.Redeploy(ctx, h.Id, oldDeploymentID) // roll back to an earlier compose file
+err = client.ContainerHosts.Delete(ctx, h.Id)
+```
+
+`SetEnv` and `SetDomains` replace the whole set. With `deploy` set to true, and a compose file
+already saved, they deploy at once and return that deployment. Live calls need a ready host whose
+server is running; otherwise they answer 409. Only one deployment runs at a time.
+
+The container host types are written by hand in `containerhosts.go`, like the cluster types.
+
 ### Retries and idempotency
 
 - Requests are retried on `429`, maintenance (`503`, but not `503 unavailable`) and gateway errors, waiting as long as the API's
@@ -113,8 +145,9 @@ Errors from the API are `*cloudxino.APIError` with a stable `Code` (`not_found`,
 ### Waiting
 
 Creating, resizing and deleting take a while. `Servers.WaitReady`, `Servers.WaitResized`,
-`Servers.WaitDeleted`, `LoadBalancers.WaitActive`, `LoadBalancers.WaitDeleted`, `Clusters.WaitActive` and
-`Clusters.WaitDeleted` poll until the
+`Servers.WaitDeleted`, `LoadBalancers.WaitActive`, `LoadBalancers.WaitDeleted`, `Clusters.WaitActive`, `Clusters.WaitDeleted`,
+`ContainerHosts.WaitReady`, `ContainerHosts.WaitPlan`, `ContainerHosts.WaitDeleted` and
+`ContainerHosts.WaitDeployment` poll until the
 change is done and return `*cloudxino.ErrStuck` when the resource ends in an error state.
 
 ## Development

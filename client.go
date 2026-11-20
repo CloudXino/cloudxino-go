@@ -42,15 +42,16 @@ type Client struct {
 	minBackoff time.Duration
 	maxBackoff time.Duration
 
-	Servers       *ServersService
-	Firewalls     *FirewallsService
-	LoadBalancers *LoadBalancersService
-	DNS           *DNSService
-	Projects      *ProjectsService
-	SSHKeys       *SSHKeysService
-	ReservedIPs   *ReservedIPsService
-	Clusters      *ClustersService
-	Account       *AccountService
+	Servers        *ServersService
+	Firewalls      *FirewallsService
+	LoadBalancers  *LoadBalancersService
+	DNS            *DNSService
+	Projects       *ProjectsService
+	SSHKeys        *SSHKeysService
+	ReservedIPs    *ReservedIPsService
+	Clusters       *ClustersService
+	ContainerHosts *ContainerHostsService
+	Account        *AccountService
 }
 
 // Option changes a Client made by NewClient.
@@ -115,6 +116,7 @@ func NewClient(token string, opts ...Option) (*Client, error) {
 	c.SSHKeys = &SSHKeysService{c}
 	c.ReservedIPs = &ReservedIPsService{c}
 	c.Clusters = &ClustersService{c}
+	c.ContainerHosts = &ContainerHostsService{c}
 	c.Account = &AccountService{c}
 	return c, nil
 }
