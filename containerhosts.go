@@ -129,6 +129,7 @@ type ContainerHost struct {
 	Server         ContainerHostServer  `json:"server"`
 	PortainerUrl   string               `json:"portainer_url"`
 	Domains        []ContainerDomain    `json:"domains"`
+	RegistryIds    []string             `json:"registry_ids"` // Container Hub registries logged in to before pulling
 	Price          *ContainerHostPrice  `json:"price,omitempty"`
 	CreatedAt      *string              `json:"created_at,omitempty"`
 	ReadyAt        *string              `json:"ready_at,omitempty"`
@@ -225,6 +226,13 @@ type ContainerEnvResult struct {
 type ContainerDomainsResult struct {
 	Domains    []ContainerDomain    `json:"domains"`
 	Deployment *ContainerDeployment `json:"deployment"`
+}
+
+// ContainerRegistriesResult is what SetRegistries saved, and the deployment it started (nil when
+// deploy was false or no compose file is saved yet).
+type ContainerRegistriesResult struct {
+	RegistryIds []string             `json:"registry_ids"`
+	Deployment  *ContainerDeployment `json:"deployment"`
 }
 
 // ListContainerHostsOptions filters List by project.
@@ -393,6 +401,20 @@ func (s *ContainerHostsService) SetDomains(ctx context.Context, id string, domai
 		Deploy  bool              `json:"deploy"`
 	}{domains, deploy}
 	return send[ContainerDomainsResult](ctx, s.c, http.MethodPut, containerHostsPath+p(id, "domains"), body, nil)
+}
+
+// SetRegistries chooses the Container Hub registries (by ID, see Registries.List) the host logs in
+// to before every `docker compose pull`; empty = none. Docker keeps one login per registry server,
+// so at most one registry per server. With deploy, and a compose file saved, it deploys at once.
+func (s *ContainerHostsService) SetRegistries(ctx context.Context, id string, registryIDs []string, deploy bool) (*ContainerRegistriesResult, error) {
+	if registryIDs == nil {
+		registryIDs = []string{}
+	}
+	body := struct {
+		RegistryIds []string `json:"registry_ids"`
+		Deploy      bool     `json:"deploy"`
+	}{registryIDs, deploy}
+	return send[ContainerRegistriesResult](ctx, s.c, http.MethodPut, containerHostsPath+p(id, "registries"), body, nil)
 }
 
 // ListDeployments lists a host's deployments, newest first, without their compose files and output.
