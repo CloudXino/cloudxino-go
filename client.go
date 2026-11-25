@@ -51,6 +51,7 @@ type Client struct {
 	ReservedIPs    *ReservedIPsService
 	Clusters       *ClustersService
 	ContainerHosts *ContainerHostsService
+	Registries     *RegistriesService
 	Account        *AccountService
 }
 
@@ -117,6 +118,7 @@ func NewClient(token string, opts ...Option) (*Client, error) {
 	c.ReservedIPs = &ReservedIPsService{c}
 	c.Clusters = &ClustersService{c}
 	c.ContainerHosts = &ContainerHostsService{c}
+	c.Registries = &RegistriesService{c}
 	c.Account = &AccountService{c}
 	return c, nil
 }
