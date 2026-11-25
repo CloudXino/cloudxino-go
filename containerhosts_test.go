@@ -439,3 +439,41 @@ func TestTail(t *testing.T) {
 		t.Fatalf("%q", got)
 	}
 }
+
+func TestContainerHostsNat(t *testing.T) {
+	c, f := newFake(t, func(w http.ResponseWriter, r *http.Request, n int) {
+		switch {
+		case strings.HasSuffix(r.URL.Path, "/options"):
+			writeJSON(w, 200, map[string]any{"enabled": true, "ip_types": []string{"public", "nat"},
+				"nat":   map[string]any{"web_ip": "103.143.148.30", "web_host": "nat.cloudxino.com", "max_domains": 9},
+				"plans": []any{map[string]any{"slug": "s-2vcpu-4gb", "per_month": 2199, "nat_server_per_month": 1399, "nat_per_month": 1799}}})
+		case strings.HasSuffix(r.URL.Path, "/status"):
+			writeJSON(w, 200, map[string]any{"containers": []any{}, "certificates": []string{},
+				"domains": []any{map[string]any{"domain": "app.example.com", "service": "web", "port": 80, "dns": []string{"103.143.148.30"},
+					"points_here": true, "ssl": "waiting_dns", "route": "pending", "route_error": "DNS lookup failed",
+					"txt_name": "_cloudxino.app.example.com", "txt_value": "cx-abc"}}})
+		default:
+			h := host("creating")
+			h["ip_type"], h["ingress_ip"] = "nat", "103.143.148.30"
+			h["server"].(map[string]any)["ip_address"] = "172.16.0.21"
+			h["nat"] = map[string]any{"web_ip": "103.143.148.30", "web_host": "nat.cloudxino.com", "private_ip": "172.16.0.21", "max_domains": 9, "ports": []int{80, 443}}
+			writeJSON(w, 201, h)
+		}
+	})
+	ctx := context.Background()
+	o, err := c.ContainerHosts.Options(ctx)
+	if err != nil || len(o.IpTypes) != 2 || o.Nat.WebIp != "103.143.148.30" || o.Nat.MaxDomains != 9 || o.Plans[0].NatPerMonth != 1799 {
+		t.Fatalf("o=%+v err=%v", o, err)
+	}
+	h, err := c.ContainerHosts.Create(ctx, CreateContainerHostRequest{Name: "apps", Plan: "s-2vcpu-4gb", IpType: ContainerHostIpNat}, "")
+	if err != nil || h.IpType != ContainerHostIpNat || h.IngressIp == nil || *h.IngressIp != "103.143.148.30" || *h.Nat.PrivateIp != "172.16.0.21" {
+		t.Fatalf("h=%+v err=%v", h, err)
+	}
+	if f.calls[1].Body != `{"name":"apps","plan":"s-2vcpu-4gb","ip_type":"nat"}` {
+		t.Fatalf("body %s", f.calls[1].Body)
+	}
+	st, err := c.ContainerHosts.Status(ctx, "h1")
+	if err != nil || *st.Domains[0].Route != "pending" || *st.Domains[0].TxtValue != "cx-abc" || !st.Domains[0].PointsHere {
+		t.Fatalf("st=%+v err=%v", st, err)
+	}
+}

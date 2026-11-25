@@ -126,6 +126,11 @@ err = client.ContainerHosts.Delete(ctx, h.Id)
 already saved, they deploy at once and return that deployment. Live calls need a ready host whose
 server is running; otherwise they answer 409. Only one deployment runs at a time.
 
+**NAT hosts.** `IpType: cloudxino.ContainerHostIpNat` orders a host without a public IP (cheaper; see
+`opts.IpTypes` and each plan's `NatPerMonth`). Its domains reach it on 80/443 through the shared NAT
+web proxy: point their A records at `h.IngressIp` (for any host, that is the IP to use in DNS), at most
+`h.Nat.MaxDomains` of them. `Status` shows each domain's proxy `Route`. The type is fixed at creation.
+
 The container host types are written by hand in `containerhosts.go`, like the cluster types.
 
 ### Retries and idempotency

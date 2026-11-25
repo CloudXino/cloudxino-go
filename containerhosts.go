@@ -54,12 +54,35 @@ type ContainerHostPlan struct {
 	FeePerMonth    float64 `json:"fee_per_month"`
 	PerMonth       float64 `json:"per_month"`
 	PerHour        float64 `json:"per_hour"`
+	// The same plan on a NAT host (IpType "nat": no public IP). Zero when the console does not
+	// say (before NAT hosts existed).
+	NatServerPerMonth float64 `json:"nat_server_per_month,omitempty"`
+	NatPerMonth       float64 `json:"nat_per_month,omitempty"`
+	NatPerHour        float64 `json:"nat_per_hour,omitempty"`
+}
+
+// Container host IP types (CreateContainerHostRequest.IpType, ContainerHost.IpType).
+const (
+	ContainerHostIpPublic = "public" // the server has its own public IPv4
+	ContainerHostIpNat    = "nat"    // no public IP; domains reach it through the shared NAT web proxy
+)
+
+// ContainerHostNat is how a NAT host is reached: visitors come to WebIp on 80/443, and the
+// proxy passes each request on by its Host header / TLS SNI.
+type ContainerHostNat struct {
+	WebIp      string  `json:"web_ip"`             // point the A records of the host's domains here
+	WebHost    *string `json:"web_host,omitempty"` // the proxy's host name, a CNAME target for subdomains
+	PrivateIp  *string `json:"private_ip,omitempty"`
+	MaxDomains int     `json:"max_domains"` // domains a NAT host can serve
+	Ports      []int   `json:"ports,omitempty"`
 }
 
 // ContainerHostOptions says whether new hosts can be ordered and which plans there are.
 type ContainerHostOptions struct {
 	Enabled bool                `json:"enabled"`
 	Plans   []ContainerHostPlan `json:"plans"`
+	IpTypes []string            `json:"ip_types,omitempty"` // "public", and "nat" when NAT hosts can be ordered
+	Nat     *ContainerHostNat   `json:"nat,omitempty"`      // set when NAT hosts can be ordered
 }
 
 // ContainerHostServer is the CC2 server under a host.
@@ -86,7 +109,7 @@ type ContainerHostResize struct {
 }
 
 // ContainerDomain routes a domain to a compose service's port through Traefik, with a Let's
-// Encrypt certificate. The domain's A record must point at the host's IP address.
+// Encrypt certificate. The domain's A record must point at the host's IngressIp.
 type ContainerDomain struct {
 	Domain  string `json:"domain"`
 	Service string `json:"service"` // a service in the compose file
@@ -121,8 +144,11 @@ type ContainerHostFirewall struct {
 type ContainerHost struct {
 	Id             string               `json:"id"`
 	Name           string               `json:"name"`
-	Plan           string               `json:"plan"`   // CC2 size slug
-	Status         string               `json:"status"` // creating, installing, ready, failed, deleting, deleted
+	Plan           string               `json:"plan"`                 // CC2 size slug
+	IpType         string               `json:"ip_type"`              // public or nat (ContainerHostIp*); "" from consoles before NAT hosts
+	IngressIp      *string              `json:"ingress_ip,omitempty"` // point domains' A records here: the server's IP, or the NAT web proxy's
+	Nat            *ContainerHostNat    `json:"nat,omitempty"`        // NAT hosts only
+	Status         string               `json:"status"`               // creating, installing, ready, failed, deleting, deleted
 	Error          *string              `json:"error,omitempty"`
 	ProjectId      string               `json:"project_id"`
 	InstanceId     string               `json:"instance_id"` // the CC2 server
@@ -186,8 +212,14 @@ type ContainerHostDisk struct {
 type ContainerDomainStatus struct {
 	ContainerDomain
 	DNS        []string `json:"dns"`         // the domain's A records now
-	PointsHere bool     `json:"points_here"` // one of them is the host's IP
+	PointsHere bool     `json:"points_here"` // one of them is the host's IngressIp
 	SSL        string   `json:"ssl"`         // active, waiting_dns or pending
+	// NAT hosts: the domain's route on the NAT web proxy (active, pending or missing), why it is not
+	// on yet, and the TXT record that also proves the domain is yours.
+	Route      *string `json:"route,omitempty"`
+	RouteError *string `json:"route_error,omitempty"`
+	TxtName    *string `json:"txt_name,omitempty"`
+	TxtValue   *string `json:"txt_value,omitempty"`
 }
 
 // ContainerHostStatus is read from the host when asked: its containers, disk and certificates.
@@ -206,6 +238,9 @@ type CreateContainerHostRequest struct {
 	// Region ID; nil = the default region.
 	Region    *string `json:"region,omitempty"`
 	ProjectId *string `json:"project_id,omitempty"` // nil = the team's default project
+	// IpType is "public" (the default when empty) or "nat": no public IP, the host's domains are
+	// reached through the shared NAT web proxy (ContainerHost.IngressIp). Fixed at creation.
+	IpType string `json:"ip_type,omitempty"`
 }
 
 // DeployRequest deploys a compose file. A nil Compose deploys the saved one again.
